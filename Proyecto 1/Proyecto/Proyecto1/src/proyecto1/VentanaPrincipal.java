@@ -5,8 +5,10 @@
 package proyecto1;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -33,6 +35,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
+        viewGolang = new javax.swing.JButton();
+        viewPython = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         openFile = new javax.swing.JMenuItem();
@@ -49,6 +53,15 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
+
+        viewGolang.setText("View code Golang");
+        viewGolang.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewGolangActionPerformed(evt);
+            }
+        });
+
+        viewPython.setText("View code Python");
 
         jMenu1.setText("File");
 
@@ -102,16 +115,27 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1032, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(viewGolang, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(42, 42, 42)
+                        .addComponent(viewPython, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1281, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(61, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(59, 59, 59)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 761, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(viewGolang, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
+                    .addComponent(viewPython, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(37, 37, 37))
         );
 
         pack();
@@ -119,33 +143,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void openFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileActionPerformed
         // TODO add your handling code here:
-        
-        Scanner entrada = null;
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.showOpenDialog(fileChooser);
-        
-        String text = "";
-        int c = 0;
-        try {
-            String ruta = fileChooser.getSelectedFile().getAbsolutePath();
-            File file = new File(ruta);
-            entrada = new Scanner(file);
-            while(entrada.hasNext()){
-                if (c > 0){
-                    text += "\n";
-                }
-                text += entrada.nextLine();
-                c += 1;
-            }
-            
-            //Escribiendo en el textArea1
-            jTextArea1.setText(text);
-            Proyecto1.ruta = ruta;
-            
-            
-        } catch (Exception e) {
-        }
-        
+        leerArchivo();
     }//GEN-LAST:event_openFileActionPerformed
 
     private void saveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileActionPerformed
@@ -155,6 +153,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void flowChartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flowChartActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_flowChartActionPerformed
+
+    private void viewGolangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewGolangActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_viewGolangActionPerformed
 
     /**
      * @param args the command line arguments
@@ -190,6 +192,49 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
     }
+    
+    public void leerArchivo(){
+        
+        // Cargando archivo
+        Scanner entrada = null;
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.showOpenDialog(fileChooser);
+        
+        // Leendo archivo
+        String text = "";
+        int c = 0;
+        try {
+            String ruta = fileChooser.getSelectedFile().getAbsolutePath();
+            File file = new File(ruta);
+            entrada = new Scanner(file);
+            while(entrada.hasNext()){
+                if (c > 0){
+                    text += "\n";
+                }
+                text += entrada.nextLine();
+                c += 1;
+            }
+            
+            //Mostrando en el textArea1
+            jTextArea1.setText(text);
+            Proyecto1.ruta = ruta;
+            
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            jTextArea1.setText("");
+        } catch (NullPointerException e) {
+            JOptionPane.showMessageDialog(null, "No ha seleccionado ningún archivo.", "Error", JOptionPane.ERROR_MESSAGE);
+            //jTextArea1.setText("");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            jTextArea1.setText("");
+        } finally {
+            if (entrada != null){
+                entrada.close();
+            }
+        }
+        
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem Errors;
@@ -204,5 +249,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem saveFile;
     private javax.swing.JMenuItem technicalManual;
     private javax.swing.JMenuItem userManual;
+    private javax.swing.JButton viewGolang;
+    private javax.swing.JButton viewPython;
     // End of variables declaration//GEN-END:variables
 }

@@ -10,6 +10,8 @@ package proyecto1;
  */
 public class Proyecto1 {
 
+    public static String ruta = "";
+
     /**
      * @param args the command line arguments
      */
