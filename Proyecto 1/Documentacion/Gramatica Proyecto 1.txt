@@ -1,5 +1,11 @@
 ----------------------------------------------------------
-Conjunto no terminales: 
+Conjunto no terminales:
+
+inicio
+metodo
+funcion
+
+
 
 mayor_que
 menor_que

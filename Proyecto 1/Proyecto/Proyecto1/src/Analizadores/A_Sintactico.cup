@@ -1,2 +1,7 @@
 package Analizadores;
 import java_cup.runtime.*;
+
+parse code {:
+:}
+
+
