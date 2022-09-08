@@ -7,7 +7,6 @@ import java_cup.runtime.*;
 %class Analizador_Lexico
 %cup
 %char
-%column
 %full
 %ignorecase
 %line
@@ -96,4 +95,3 @@ MINUSCULAS = [a-z][ ]?[\~][ ]?[a-z]
     System.out.println("Este es un error léxico: " + yytext() + ". Linea "+yyline+", columna "+yycolumn+".");
     // Agregar errores a objeto para imprimir errores....
 }
-
