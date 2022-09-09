@@ -1056,7 +1056,7 @@ public class Analizador_Lexico implements java_cup.runtime.Scanner {
             // fall through
           case 87: break;
           case 23: 
-            { return new Symbol(sym.PR_FIN, yycolumn, yyline, yytext())
+            { return new Symbol(sym.PR_FIN, yycolumn, yyline, yytext());
             } 
             // fall through
           case 88: break;
@@ -1126,7 +1126,7 @@ public class Analizador_Lexico implements java_cup.runtime.Scanner {
             // fall through
           case 101: break;
           case 37: 
-            { return new Symbol(sym.PR_INICIO, yycolumn, yyline, yytext())
+            { return new Symbol(sym.PR_INICIO, yycolumn, yyline, yytext());
             } 
             // fall through
           case 102: break;

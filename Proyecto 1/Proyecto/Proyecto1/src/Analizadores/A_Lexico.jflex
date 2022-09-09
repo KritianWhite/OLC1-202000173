@@ -27,8 +27,8 @@ CADENA = [\"][^\"]*[\"]
 DIGITOS = [0-9]+("." [0-9]+)?
 %%
 
-"inicio" {return new Symbol(sym.PR_INICIO, yycolumn, yyline, yytext())}
-"fin" {return new Symbol(sym.PR_FIN, yycolumn, yyline, yytext())}
+"inicio" {return new Symbol(sym.PR_INICIO, yycolumn, yyline, yytext());}
+"fin" {return new Symbol(sym.PR_FIN, yycolumn, yyline, yytext());}
 "ingresar" {return new Symbol(sym.PR_INGRESAR, yycolumn, yyline, yytext());}
 "como" {return new Symbol(sym.PR_COMO, yycolumn, yyline, yytext());}
 "con_valor" {return new Symbol(sym.PR_CON_VALOR, yycolumn, yyline, yytext());}

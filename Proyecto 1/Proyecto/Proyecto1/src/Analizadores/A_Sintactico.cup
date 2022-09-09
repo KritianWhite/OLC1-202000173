@@ -35,14 +35,33 @@ terminal String SB_PUNTO_Y_COMA, SB_COMA, yycolumn, SB_INTERROGACION_LEFT, SB_IN
 terminal String COMENTARIO1, COMENTARIO2, CARACTER, BOOLEAN, IDENTIFICADOR, CARACTER_E, CADENA, DIGITOS;
 
 non terminal codigo;
-non terminal bloque;
-
-
-
-
-precedence left OP_OR;
+non terminal declaracion, tipodato, valor;
+non terminal lista, lista_variables, lista_sentencias;
+non terminal expresion, termino, factor;
+non terminal bloque, metodo, funcion;
+non terminal sentencia;
 
 
 start with codigo;
 
-codigo ::= PR_INICIO;
+codigo ::= PR_INICIO declaracion | lista | expresion | bloque;
+declaracion ::= PR_INGRESAR IDENTIFICADOR PR_COMO tipodato
+PR_CON_VALOR valor | expresion;
+tipodato ::= PR_NUMERO | PR_CADENA | PR_BOOLEAN | PR_CARACTER;
+valor ::= DIGITOS | CADENA;
+
+expresion ::= expresion OP_SUMA termino;
+expresion ::= expresion OP_RESTA termino;
+expresion ::= termino;
+termino ::= termino OP_MULTIPLICACION factor;
+termino ::= termino OP_DIVISION factor;
+termino ::= factor;
+factor ::= SB_PARENTESIS_LEFT expresion SB_PARENTESIS_RIGHT;
+factor ::= DIGITOS;
+
+lista ::= lista_variables | lista_sentencias;
+lista_variables ::= IDENTIFICADOR SB_COMA lista_variables | IDENTIFICADOR;
+lista_sentencias ::= sentencia;
+
+bloque ::= metodo | funcion;
+
