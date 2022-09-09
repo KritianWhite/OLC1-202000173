@@ -2,13 +2,11 @@ package Analizadores;
 import java_cup.runtime.*;
 
 %%
-// Declaracion de variables globales
 %init{
     yyline = 1;
     yycolumn = 1;
 %init}
 
-//directrices
 %public
 %class Analizador_Lexico
 %cup
@@ -18,7 +16,6 @@ import java_cup.runtime.*;
 %line
 %unicode
 
-// Expresiones regulares
 ESPACIOS = [ \t\r\n\f]+
 COMENTARIO_L = [\/\/][^\n]*[\n]
 COMENTARIO_M = [\/][\*][^)]*[\*][\/]
@@ -28,11 +25,10 @@ IDENTIFICADOR = [_][a-zA-Z0-9]+[_]
 CARACTER_E = [\"][\\][\"\'n][\"];
 CADENA = [\"][^\"]*[\"]
 DIGITOS = [0-9]+("." [0-9]+)?
-FLECHAS = [\-]?[\>]
 %%
 
-// Definición de Tokens
-// Palabras reservadas 
+"inicio" {return new Symbol(sym.PR_INICIO, yycolumn, yyline, yytext())}
+"fin" {return new Symbol(sym.PR_FIN, yycolumn, yyline, yytext())}
 "ingresar" {return new Symbol(sym.PR_INGRESAR, yycolumn, yyline, yytext());}
 "como" {return new Symbol(sym.PR_COMO, yycolumn, yyline, yytext());}
 "con_valor" {return new Symbol(sym.PR_CON_VALOR, yycolumn, yyline, yytext());}
@@ -67,7 +63,6 @@ FLECHAS = [\-]?[\>]
 "boolean" {return new Symbol(sym.PR_BOOLEAN, yycolumn, yyline, yytext());}
 "caracter" {return new Symbol(sym.PR_CARACTER, yycolumn, yyline, yytext());}
 
-//Operadores
 "and" {return new Symbol(sym.OP_AND, yycolumn, yyline, yytext());}
 "or" {return new Symbol(sym.OP_OR, yycolumn, yyline, yytext());}
 
@@ -84,7 +79,6 @@ FLECHAS = [\-]?[\>]
 "mayor_igual" {return new Symbol(sym.OP_MAYOR_IGUAL, yycolumn, yyline, yytext());}
 "menor_igual" {return new Symbol(sym.OP_MENOR_IGUAL, yycolumn, yyline, yytext());}
 
-//Simbolos
 "(" {return new Symbol(sym.SB_PARENTESIS_LEFT, yycolumn, yyline, yytext());}
 ")" {return new Symbol(sym.SB_PARENTESIS_RIGHT, yycolumn, yyline, yytext());}
 ";" {return new Symbol(sym.SB_PUNTO_Y_COMA, yycolumn, yyline, yytext());}
@@ -92,6 +86,15 @@ FLECHAS = [\-]?[\>]
 "¿" {return new Symbol(sym.SB_INTERROGACION_LEFT, yycolumn, yyline, yytext());}
 "?" {return new Symbol(sym.SB_INTERROGACION_RIGHT, yycolumn, yyline, yytext());}
 
+{ESPACIOS} {}
+{COMENTARIO_L} {return new Symbol(sym.COMENTARIO1, yycolumn, yyline, yytext());}
+{COMENTARIO_M} {return new Symbol(sym.COMENTARIO2, yycolumn, yyline, yytext());}
+{CARACTER} {return new Symbol(sym.CARACTER, yycolumn, yyline, yytext());}
+{BOOLEAN} {return new Symbol(sym.BOOLEAN, yycolumn, yyline, yytext());}
+{IDENTIFICADOR} {return new Symbol(sym.IDENTIFICADOR, yycolumn, yyline, yytext());}
+{CARACTER_E} {return new Symbol(sym.CARACTER_E, yycolumn, yyline, yytext());}
+{CADENA} {return new Symbol(sym.CADENA, yycolumn, yyline, yytext());}
+{DIGITOS} {return new Symbol(sym.DIGITOS, yycolumn, yyline, yytext());}
  . {
-    return new Symbol(sym.ERROR, yycolumn, yyline, yytext());
+    System.out.println("Error, "+yytext());
 }

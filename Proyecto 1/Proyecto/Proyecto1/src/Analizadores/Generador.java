@@ -15,7 +15,7 @@ public class Generador {
             String opcFlex[] = {ruta+"A_Lexico.jflex","-d",ruta};
             jflex.Main.generate(opcFlex);
             
-            String opcCup[] = {"-destdir", ruta, "-parser", "Parser", ruta + "A_Sintactico.cup"};
+            String opcCup[] = {"-destdir", ruta, "-parser", "Analizador_Sintactico", ruta + "A_Sintactico.cup"};
             java_cup.Main.main(opcCup);
             
         }catch(Exception e){

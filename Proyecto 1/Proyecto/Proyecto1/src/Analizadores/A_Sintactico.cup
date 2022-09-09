@@ -1,7 +1,48 @@
 package Analizadores;
 import java_cup.runtime.*;
 
-parse code {:
+parser code 
+{:
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/ 
+    public void syntax_error(Symbol s){ 
+        System.out.println("Error Sintáctico en la Línea " + (s.left) +
+        " Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
+    } 
+
+    /**
+     * Método al que se llama automáticamente ante algún error sintáctico 
+     * en el que ya no es posible una recuperación de errores.
+     **/ 
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        System.out.println("Error síntactico irrecuperable en la Línea " + 
+        (s.left)+ " Columna "+s.right+". Componente " + s.value + 
+        " no reconocido."); 
+    }  
 :}
 
+terminal String PR_INICIO, PR_FIN, PR_INGRESAR, PR_COMO, PR_CON_VALOR, PR_ASIGNACION, PR_SI;
+terminal String PR_ENTONCES, PR_DE_LO_CONTRARIO, PR_O_SI, PR_FIN_SI, PR_SEGUN, PR_HACER;
+terminal String PR_FIN_SEGUN, PR_PARA, PR_HASTA, PR_CON_INCREMENTAL, PR_FIN_PARA;
+terminal String PR_MIENTRAS, PR_FIN_MIENTRAS, PR_REPETIR, PR_HASTA_QUE, PR_RETORNAR;
+terminal String PR_EJECUTAR, PR_IMPRIMIR, PR_IMPRIMIR_NL, PR_METODO, PR_CON_PARAMETROS;
+terminal String PR_FIN_METODO, PR_FUNCION, PR_FIN_FUNCION, PR_NUMERO, PR_CADENA, PR_BOOLEAN;
+terminal String PR_CARACTER, OP_AND, OP_OR, OP_SUMA, OP_RESTA, OP_MULTIPLICACION, OP_DIVISION;
+terminal String OP_POTENCIA, OP_MODULO, OP_MAYOR_QUE, OP_MENOR_QUE, OP_IGUAL, OP_ES_DIFERENTE;
+terminal String OP_MAYOR_IGUAL, OP_MENOR_IGUAL, SB_PARENTESIS_LEFT, SB_PARENTESIS_RIGHT;
+terminal String SB_PUNTO_Y_COMA, SB_COMA, yycolumn, SB_INTERROGACION_LEFT, SB_INTERROGACION_RIGHT;
+terminal String COMENTARIO1, COMENTARIO2, CARACTER, BOOLEAN, IDENTIFICADOR, CARACTER_E, CADENA, DIGITOS;
 
+non terminal codigo;
+non terminal bloque;
+
+
+
+
+precedence left OP_OR;
+
+
+start with codigo;
+
+codigo ::= PR_INICIO;
