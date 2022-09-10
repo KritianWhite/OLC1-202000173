@@ -34,34 +34,45 @@ terminal String OP_MAYOR_IGUAL, OP_MENOR_IGUAL, SB_PARENTESIS_LEFT, SB_PARENTESI
 terminal String SB_PUNTO_Y_COMA, SB_COMA, yycolumn, SB_INTERROGACION_LEFT, SB_INTERROGACION_RIGHT;
 terminal String COMENTARIO1, COMENTARIO2, CARACTER, BOOLEAN, IDENTIFICADOR, CARACTER_E, CADENA, DIGITOS;
 
-non terminal codigo;
-non terminal declaracion, tipodato, valor;
-non terminal lista, lista_variables, lista_sentencias;
-non terminal expresion, termino, factor;
-non terminal bloque, metodo, funcion;
-non terminal sentencia;
+non terminal codigo, instrucciones;
+non terminal comentarios, declaracion, tipo_dato, expresiones, asignacion;
+non terminal operacion, expresion;
+non terminal lista_variables;
+non terminal termino, factor;
+
+
+precedence left OP_SUMA, OP_RESTA;
+precedence left OP_MULTIPLICACION, OP_DIVISION;
+precedence left OP_MODULO, OP_POTENCIA;
 
 
 start with codigo;
 
-codigo ::= PR_INICIO declaracion | lista | expresion | bloque;
-declaracion ::= PR_INGRESAR IDENTIFICADOR PR_COMO tipodato
-PR_CON_VALOR valor | expresion;
-tipodato ::= PR_NUMERO | PR_CADENA | PR_BOOLEAN | PR_CARACTER;
-valor ::= DIGITOS | CADENA;
 
-expresion ::= expresion OP_SUMA termino;
-expresion ::= expresion OP_RESTA termino;
-expresion ::= termino;
+codigo ::= PR_INICIO instrucciones;
+
+instrucciones ::= comentarios | declaracion | tipo_dato | asignacion;
+
+comentarios::= COMENTARIO1 | COMENTARIO2;
+
+declaracion ::= PR_INGRESAR lista_variables PR_COMO tipo_dato PR_CON_VALOR expresiones;
+
+tipo_dato ::= PR_NUMERO | PR_CADENA | PR_BOOLEAN | PR_CARACTER;
+
+expresiones ::= expresion | operacion;
+
+expresion ::= CADENA | BOOLEAN | CARACTER;
+
+operacion ::= operacion OP_SUMA termino;
+operacion ::= operacion OP_RESTA termino;
+operacion ::= termino;
 termino ::= termino OP_MULTIPLICACION factor;
 termino ::= termino OP_DIVISION factor;
 termino ::= factor;
-factor ::= SB_PARENTESIS_LEFT expresion SB_PARENTESIS_RIGHT;
+factor ::= SB_PARENTESIS_LEFT operacion SB_PARENTESIS_RIGHT;
 factor ::= DIGITOS;
 
-lista ::= lista_variables | lista_sentencias;
 lista_variables ::= IDENTIFICADOR SB_COMA lista_variables | IDENTIFICADOR;
-lista_sentencias ::= sentencia;
 
-bloque ::= metodo | funcion;
+asignacion ::= lista_variables PR_ASIGNACION expresiones;
 
