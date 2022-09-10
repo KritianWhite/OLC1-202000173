@@ -35,10 +35,17 @@ terminal String SB_PUNTO_Y_COMA, SB_COMA, yycolumn, SB_INTERROGACION_LEFT, SB_IN
 terminal String COMENTARIO1, COMENTARIO2, CARACTER, BOOLEAN, IDENTIFICADOR, CARACTER_E, CADENA, DIGITOS;
 
 non terminal codigo, instrucciones;
-non terminal comentarios, declaracion, tipo_dato, expresiones, asignacion;
+non terminal comentarios, declaracion, asignacion, tipo_dato, expresiones, ciclos;
 non terminal operacion, expresion;
 non terminal lista_variables;
 non terminal termino, factor;
+non terminal if, if1, if2, o_si, delo_contrario;
+non terminal condicion;
+non terminal segun, segun_contrario;
+non terminal para;
+non terminal repetir;
+
+
 
 
 precedence left OP_SUMA, OP_RESTA;
@@ -51,7 +58,7 @@ start with codigo;
 
 codigo ::= PR_INICIO instrucciones;
 
-instrucciones ::= comentarios | declaracion | tipo_dato | asignacion;
+instrucciones ::= comentarios | declaracion | tipo_dato | asignacion | ciclos;
 
 comentarios::= COMENTARIO1 | COMENTARIO2;
 
@@ -76,3 +83,37 @@ lista_variables ::= IDENTIFICADOR SB_COMA lista_variables | IDENTIFICADOR;
 
 asignacion ::= lista_variables PR_ASIGNACION expresiones;
 
+ciclos ::= if | segun | para | repetir;
+
+if ::= if1 | if2;
+if1 ::= PR_SI condicion PR_ENTONCES
+       instrucciones
+       PR_FIN_SI;
+if2 ::= PR_SI condicion
+       instrucciones
+       delo_contrario | o_si PR_FIN_SI;
+o_si ::= PR_O_SI condicion PR_ENTONCES
+         instrucciones;
+delo_contrario ::= instrucciones;
+condicion ::= IDENTIFICADOR OP_IGUAL condicion | IDENTIFICADOR;
+
+segun ::= PR_SEGUN IDENTIFICADOR PR_HACER 
+          SB_INTERROGACION_LEFT DIGITOS SB_INTERROGACION_RIGHT PR_ENTONCES
+          instrucciones
+          segun_contrario | PR_FIN_SEGUN;
+segun_contrario ::= PR_DE_LO_CONTRARIO PR_ENTONCES
+                    instrucciones;
+
+
+
+para ::= PR_PARA IDENTIFICADOR PR_ASIGNACION expresiones PR_HASTA expresiones PR_HACER
+         instrucciones
+         PR_FIN_PARA;
+
+mientras ::= PR_MIENTRAS condicion PR_HACER
+             instrucciones
+             PR_FIN_MIENTRAS;
+
+repetir ::= PR_REPETIR
+            instrucciones
+            PR_HASTA_QUE condicion;
