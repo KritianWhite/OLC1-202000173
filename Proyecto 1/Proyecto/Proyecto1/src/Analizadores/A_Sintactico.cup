@@ -35,7 +35,7 @@ terminal String SB_PUNTO_Y_COMA, SB_COMA, yycolumn, SB_INTERROGACION_LEFT, SB_IN
 terminal String COMENTARIO1, COMENTARIO2, CARACTER, BOOLEAN, IDENTIFICADOR, CARACTER_E, CADENA, DIGITOS;
 
 non terminal codigo, instrucciones;
-non terminal comentarios, declaracion, asignacion, tipo_dato, expresiones, ciclos, metodo, funcion;
+non terminal comentarios, declaracion, asignacion, tipo_dato, expresiones, ciclos, metodo, funcion, impresion;
 non terminal operacion, expresion;
 non terminal lista_variables;
 non terminal termino, factor;
@@ -46,7 +46,8 @@ non terminal para, hacer, con_incremental, h_c;
 non terminal mientras;
 non terminal repetir;
 non terminal metodo1, metodo2, parametro, lista_parametros;
-non terminal funcion1, funcion2, retornar, retornar_valor;
+non terminal funcion1, funcion2, retornar, retornar_valor, ejecutar, ejecutar_sinP, ejecutar_conP;
+non terminal imprimir_sS, imprimir_cS;
 
 
 
@@ -63,7 +64,7 @@ start with codigo;
 codigo ::= PR_INICIO instrucciones PR_FIN;
 
 instrucciones ::= comentarios | declaracion | tipo_dato | asignacion | ciclos
-                  | metodo | funcion;
+                  | metodo | funcion | impresion;
 
 comentarios::= COMENTARIO1 | COMENTARIO2;
 
@@ -117,7 +118,7 @@ para ::= PR_PARA IDENTIFICADOR PR_ASIGNACION expresiones PR_HASTA expresiones
          PR_FIN_PARA;
 h_c ::= hacer | con_incremental;
 hacer ::= PR_HACER instrucciones;
-con_incremental ::= valor PR_HACER instrucciones;
+con_incremental ::= PR_CON_INCREMENTAL valor PR_HACER instrucciones;
 
 mientras ::= PR_MIENTRAS condicion PR_HACER
              instrucciones
@@ -128,7 +129,7 @@ repetir ::= PR_REPETIR
             PR_HASTA_QUE condicion;
 
 
-metodo ::= metodo1 | metodo2;
+metodo ::= metodo1 | metodo2 ejecutar;
 metodo1 ::= PR_METODO IDENTIFICADOR
             instrucciones
             PR_FIN_METODO;
@@ -139,7 +140,7 @@ lista_parametros ::= parametro SB_COMA lista_parametros | parametro;
 parametro ::= IDENTIFICADOR tipo_dato;
 
 
-funcion ::= funcion1 | funcion2;
+funcion ::= funcion1 | funcion2 ejecutar;
 funcion1 ::= PR_FUNCION IDENTIFICADOR tipo_dato
              instrucciones
              retornar
@@ -150,6 +151,11 @@ funcion2 ::= PR_FUNCION IDENTIFICADOR tipo_dato PR_CON_PARAMETROS lista_parametr
              PR_FIN_FUNCION;
 retornar ::= retornar_valor | ;
 retornar_valor ::= PR_RETORNAR expresiones SB_PUNTO_Y_COMA;
+ejecutar ::= ejecutar_sinP | ejecutar_conP | ;
+ejecutar_sinP ::= PR_EJECUTAR IDENTIFICADOR SB_PARENTESIS_LEFT SB_PARENTESIS_RIGHT SB_PUNTO_Y_COMA;
+ejecutar_conP ::= PR_EJECUTAR IDENTIFICADOR SB_PARENTESIS_LEFT lista_parametros SB_PARENTESIS_RIGHT SB_PUNTO_Y_COMA;
 
 
-
+impresion ::= imprimir_sS | imprimir_cS;
+imprimir_sS ::= PR_IMPRIMIR IDENTIFICADOR | expresiones SB_PUNTO_Y_COMA;
+imprimir_cS ::= PR_IMPRIMIR_NL CADENA SB_PUNTO_Y_COMA;
