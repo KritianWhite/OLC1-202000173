@@ -35,15 +35,19 @@ terminal String SB_PUNTO_Y_COMA, SB_COMA, yycolumn, SB_INTERROGACION_LEFT, SB_IN
 terminal String COMENTARIO1, COMENTARIO2, CARACTER, BOOLEAN, IDENTIFICADOR, CARACTER_E, CADENA, DIGITOS;
 
 non terminal codigo, instrucciones;
-non terminal comentarios, declaracion, asignacion, tipo_dato, expresiones, ciclos;
+non terminal comentarios, declaracion, asignacion, tipo_dato, expresiones, ciclos, metodo, funcion;
 non terminal operacion, expresion;
 non terminal lista_variables;
 non terminal termino, factor;
 non terminal if, if1, if2, o_si, delo_contrario;
 non terminal condicion;
-non terminal segun, segun_contrario;
-non terminal para;
+non terminal segun, segun_contrario, caso, valor;
+non terminal para, hacer, con_incremental, h_c;
+non terminal mientras;
 non terminal repetir;
+non terminal metodo1, metodo2, parametro, lista_parametros;
+non terminal funcion1, funcion2, retornar, retornar_valor;
+
 
 
 
@@ -56,9 +60,10 @@ precedence left OP_MODULO, OP_POTENCIA;
 start with codigo;
 
 
-codigo ::= PR_INICIO instrucciones;
+codigo ::= PR_INICIO instrucciones PR_FIN;
 
-instrucciones ::= comentarios | declaracion | tipo_dato | asignacion | ciclos;
+instrucciones ::= comentarios | declaracion | tipo_dato | asignacion | ciclos
+                  | metodo | funcion;
 
 comentarios::= COMENTARIO1 | COMENTARIO2;
 
@@ -83,7 +88,7 @@ lista_variables ::= IDENTIFICADOR SB_COMA lista_variables | IDENTIFICADOR;
 
 asignacion ::= lista_variables PR_ASIGNACION expresiones;
 
-ciclos ::= if | segun | para | repetir;
+ciclos ::= if | segun | para | mientras | repetir;
 
 if ::= if1 | if2;
 if1 ::= PR_SI condicion PR_ENTONCES
@@ -95,20 +100,24 @@ if2 ::= PR_SI condicion
 o_si ::= PR_O_SI condicion PR_ENTONCES
          instrucciones;
 delo_contrario ::= instrucciones;
-condicion ::= IDENTIFICADOR OP_IGUAL condicion | IDENTIFICADOR;
+condicion ::= IDENTIFICADOR OP_IGUAL | OP_ES_DIFERENTE
+              | OP_MAYOR_IGUAL | OP_MENOR_IGUAL condicion | IDENTIFICADOR;
 
-segun ::= PR_SEGUN IDENTIFICADOR PR_HACER 
-          SB_INTERROGACION_LEFT DIGITOS SB_INTERROGACION_RIGHT PR_ENTONCES
-          instrucciones
-          segun_contrario | PR_FIN_SEGUN;
+segun ::= PR_SEGUN valor PR_HACER 
+          caso | segun_contrario PR_FIN_SEGUN;
+caso ::= SB_INTERROGACION_LEFT expresiones SB_INTERROGACION_RIGHT PR_ENTONCES
+         instrucciones;
 segun_contrario ::= PR_DE_LO_CONTRARIO PR_ENTONCES
                     instrucciones;
+valor ::= operacion | IDENTIFICADOR;
 
 
-
-para ::= PR_PARA IDENTIFICADOR PR_ASIGNACION expresiones PR_HASTA expresiones PR_HACER
-         instrucciones
+para ::= PR_PARA IDENTIFICADOR PR_ASIGNACION expresiones PR_HASTA expresiones
+         h_c
          PR_FIN_PARA;
+h_c ::= hacer | con_incremental;
+hacer ::= PR_HACER instrucciones;
+con_incremental ::= valor PR_HACER instrucciones;
 
 mientras ::= PR_MIENTRAS condicion PR_HACER
              instrucciones
@@ -117,3 +126,30 @@ mientras ::= PR_MIENTRAS condicion PR_HACER
 repetir ::= PR_REPETIR
             instrucciones
             PR_HASTA_QUE condicion;
+
+
+metodo ::= metodo1 | metodo2;
+metodo1 ::= PR_METODO IDENTIFICADOR
+            instrucciones
+            PR_FIN_METODO;
+metodo2 ::= PR_METODO IDENTIFICADOR PR_CON_PARAMETROS lista_parametros
+            instrucciones
+            PR_FIN_METODO;
+lista_parametros ::= parametro SB_COMA lista_parametros | parametro;
+parametro ::= IDENTIFICADOR tipo_dato;
+
+
+funcion ::= funcion1 | funcion2;
+funcion1 ::= PR_FUNCION IDENTIFICADOR tipo_dato
+             instrucciones
+             retornar
+             PR_FIN_FUNCION;
+funcion2 ::= PR_FUNCION IDENTIFICADOR tipo_dato PR_CON_PARAMETROS lista_parametros
+             instrucciones
+             retornar
+             PR_FIN_FUNCION;
+retornar ::= retornar_valor | ;
+retornar_valor ::= PR_RETORNAR expresiones SB_PUNTO_Y_COMA;
+
+
+
