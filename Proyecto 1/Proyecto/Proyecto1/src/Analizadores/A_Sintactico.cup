@@ -1,5 +1,7 @@
 package Analizadores;
 import java_cup.runtime.*;
+import java.util.ArrayList;
+import Error_.*;
 
 parser code 
 {:
@@ -7,8 +9,8 @@ parser code
      * Método al que se llama automáticamente ante algún error sintactico.
      **/ 
     public void syntax_error(Symbol s){ 
-        System.out.println("Error Sintáctico en la Línea " + (s.left) +
-        " Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
+        System.out.println("Error Sintáctico en la Línea " + (s.left) + " Columna "+s.right+ ". No se esperaba este componente: " +s.value);
+        AnalizarArchivo.errores.add(new Error_( "Se detectó un error sintáctico ("+s.value+")", "Sintáctico",s.left, s.right));
     } 
 
     /**
@@ -16,21 +18,20 @@ parser code
      * en el que ya no es posible una recuperación de errores.
      **/ 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
-        System.out.println("Error síntactico irrecuperable en la Línea " + 
-        (s.left)+ " Columna "+s.right+". Componente " + s.value + 
-        " no reconocido."); 
+        System.out.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido");
+        AnalizarArchivo.errores.add(new Error_( "Se detectó un error sintáctico ("+s.value+")", "Sintáctico",s.left, s.right));
     }  
 :}
 
 terminal String PR_INICIO, PR_FIN, PR_INGRESAR, PR_COMO, PR_CON_VALOR, PR_ASIGNACION, PR_SI;
 terminal String PR_ENTONCES, PR_DE_LO_CONTRARIO, PR_O_SI, PR_FIN_SI, PR_SEGUN, PR_HACER;
-terminal String PR_FIN_SEGUN, PR_PARA, PR_HASTA, PR_CON_INCREMENTAL, PR_FIN_PARA;
+terminal String PR_FIN_SEGUN, PR_PARA, PR_HASTA, PR_CON, PR_INCREMENTAL, PR_FIN_PARA;
 terminal String PR_MIENTRAS, PR_FIN_MIENTRAS, PR_REPETIR, PR_HASTA_QUE, PR_RETORNAR;
 terminal String PR_EJECUTAR, PR_IMPRIMIR, PR_IMPRIMIR_NL, PR_METODO, PR_CON_PARAMETROS;
 terminal String PR_FIN_METODO, PR_FUNCION, PR_FIN_FUNCION, PR_NUMERO, PR_CADENA, PR_BOOLEAN;
-terminal String PR_CARACTER, OP_AND, OP_OR, OP_SUMA, OP_RESTA, OP_MULTIPLICACION, OP_DIVISION;
+terminal String PR_CARACTER, OP_AND, OP_OR, OP_NOT, OP_SUMA, OP_RESTA, OP_MULTIPLICACION, OP_DIVISION;
 terminal String OP_POTENCIA, OP_MODULO, OP_MAYOR_QUE, OP_MENOR_QUE, OP_IGUAL, OP_ES_DIFERENTE;
-terminal String OP_MAYOR_IGUAL, OP_MENOR_IGUAL, SB_PARENTESIS_LEFT, SB_PARENTESIS_RIGHT;
+terminal String OP_MAYOR_IGUAL, OP_MENOR_IGUAL, SB_CORCHETE_LEFT, SB_CORCHETE_RIGHT, SB_PARENTESIS_LEFT, SB_PARENTESIS_RIGHT;
 terminal String SB_PUNTO_Y_COMA, SB_COMA, yycolumn, SB_INTERROGACION_LEFT, SB_INTERROGACION_RIGHT;
 terminal String COMENTARIO1, COMENTARIO2, CARACTER, BOOLEAN, IDENTIFICADOR, CARACTER_E, CADENA, DIGITOS;
 
@@ -41,7 +42,7 @@ non terminal lista_variables;
 non terminal termino, factor;
 non terminal if, if1, if2, o_si, delo_contrario;
 non terminal condicion;
-non terminal segun, segun_contrario, caso, valor;
+non terminal segun, segun_contrario, caso;
 non terminal para, hacer, con_incremental, h_c;
 non terminal mientras;
 non terminal repetir;
@@ -58,17 +59,20 @@ precedence left OP_MULTIPLICACION, OP_DIVISION;
 precedence left OP_MODULO, OP_POTENCIA;
 
 
+
+
+
+
 start with codigo;
 
 
 codigo ::= PR_INICIO instrucciones PR_FIN;
 
-instrucciones ::= comentarios | declaracion | tipo_dato | asignacion | ciclos
-                  | metodo | funcion | impresion;
+instrucciones ::= declaracion | tipo_dato | asignacion | ciclos
+                  | funcion | metodo | impresion | error;
 
-comentarios::= COMENTARIO1 | COMENTARIO2;
 
-declaracion ::= PR_INGRESAR lista_variables PR_COMO tipo_dato PR_CON_VALOR expresiones;
+declaracion ::= PR_INGRESAR lista_variables PR_COMO tipo_dato PR_CON_VALOR expresiones SB_PUNTO_Y_COMA instrucciones;
 
 tipo_dato ::= PR_NUMERO | PR_CADENA | PR_BOOLEAN | PR_CARACTER;
 
@@ -81,9 +85,11 @@ operacion ::= operacion OP_RESTA termino;
 operacion ::= termino;
 termino ::= termino OP_MULTIPLICACION factor;
 termino ::= termino OP_DIVISION factor;
+termino ::= termino OP_POTENCIA SB_CORCHETE_LEFT operacion SB_CORCHETE_RIGHT;
+termino ::= termino OP_MODULO factor;
 termino ::= factor;
 factor ::= SB_PARENTESIS_LEFT operacion SB_PARENTESIS_RIGHT;
-factor ::= DIGITOS;
+factor ::= DIGITOS | IDENTIFICADOR;
 
 lista_variables ::= IDENTIFICADOR SB_COMA lista_variables | IDENTIFICADOR;
 
@@ -104,13 +110,12 @@ delo_contrario ::= instrucciones;
 condicion ::= IDENTIFICADOR OP_IGUAL | OP_ES_DIFERENTE
               | OP_MAYOR_IGUAL | OP_MENOR_IGUAL condicion | IDENTIFICADOR;
 
-segun ::= PR_SEGUN valor PR_HACER 
+segun ::= PR_SEGUN operacion PR_HACER 
           caso | segun_contrario PR_FIN_SEGUN;
 caso ::= SB_INTERROGACION_LEFT expresiones SB_INTERROGACION_RIGHT PR_ENTONCES
          instrucciones;
 segun_contrario ::= PR_DE_LO_CONTRARIO PR_ENTONCES
                     instrucciones;
-valor ::= operacion | IDENTIFICADOR;
 
 
 para ::= PR_PARA IDENTIFICADOR PR_ASIGNACION expresiones PR_HASTA expresiones
@@ -118,7 +123,7 @@ para ::= PR_PARA IDENTIFICADOR PR_ASIGNACION expresiones PR_HASTA expresiones
          PR_FIN_PARA;
 h_c ::= hacer | con_incremental;
 hacer ::= PR_HACER instrucciones;
-con_incremental ::= PR_CON_INCREMENTAL valor PR_HACER instrucciones;
+con_incremental ::= PR_CON PR_INCREMENTAL operacion PR_HACER instrucciones;
 
 mientras ::= PR_MIENTRAS condicion PR_HACER
              instrucciones

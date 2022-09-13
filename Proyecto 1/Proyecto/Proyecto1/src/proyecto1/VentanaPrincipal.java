@@ -9,6 +9,11 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import Analizadores.*;
+import Error_.Error_;
+import java.io.StringReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -37,6 +42,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jTextArea1 = new javax.swing.JTextArea();
         viewGolang = new javax.swing.JButton();
         viewPython = new javax.swing.JButton();
+        Run = new javax.swing.JButton();
+        Clear = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         openFile = new javax.swing.JMenuItem();
@@ -62,6 +69,25 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
 
         viewPython.setText("View code Python");
+        viewPython.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewPythonActionPerformed(evt);
+            }
+        });
+
+        Run.setText("Run");
+        Run.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RunActionPerformed(evt);
+            }
+        });
+
+        Clear.setText("Clear");
+        Clear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ClearActionPerformed(evt);
+            }
+        });
 
         jMenu1.setText("File");
 
@@ -115,21 +141,31 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(viewGolang, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(42, 42, 42)
-                        .addComponent(viewPython, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1281, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap()
+                        .addComponent(Clear)
+                        .addGap(45, 45, 45)
+                        .addComponent(Run))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(viewGolang, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(42, 42, 42)
+                            .addComponent(viewPython, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addGap(17, 17, 17)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1281, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(59, 59, 59)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Run)
+                    .addComponent(Clear))
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 761, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -157,6 +193,24 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void viewGolangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewGolangActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_viewGolangActionPerformed
+
+    private void viewPythonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewPythonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_viewPythonActionPerformed
+
+    private void RunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RunActionPerformed
+        try {
+            // TODO add your handling code here:
+            analizadorLexico();
+        } catch (Exception ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_RunActionPerformed
+
+    private void ClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ClearActionPerformed
 
     /**
      * @param args the command line arguments
@@ -235,9 +289,19 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
         
     }
+    
+    private void analizadorLexico() throws Exception {
+        String text2 = (String) jTextArea1.getText();
+        Analizador_Lexico lexico = new Analizador_Lexico(new StringReader(text2));
+        Analizador_Sintactico sintactico = new Analizador_Sintactico(lexico);
+        sintactico.parse();
+        //System.out.println(text2);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Clear;
     private javax.swing.JMenuItem Errors;
+    private javax.swing.JButton Run;
     private javax.swing.JMenuItem flowChart;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
