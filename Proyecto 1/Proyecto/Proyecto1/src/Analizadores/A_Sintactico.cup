@@ -36,21 +36,15 @@ terminal String SB_PUNTO_Y_COMA, SB_COMA, yycolumn, SB_INTERROGACION_LEFT, SB_IN
 terminal String COMENTARIO1, COMENTARIO2, CARACTER, BOOLEAN, IDENTIFICADOR, CARACTER_E, CADENA, DIGITOS;
 
 non terminal codigo, instrucciones, instruccion;
-non terminal operacion, expresion, dato, termino, factor;
-non terminal expresiones, operaciones, lista_variables, relacional, dato_relacional ;
-non terminal epsilon;
-
-non terminal comentarios, declaracion, asignacion, tipo_dato, ciclos, metodo, funcion, impresion;
-
-non terminal if, if1, if2, o_si, delo_contrario;
-non terminal condicion;
-non terminal segun, segun_contrario, caso;
-non terminal para, hacer, con_incremental, h_c;
-non terminal mientras;
+non terminal operacion, dato, relacional, logicos;
+non terminal lista_variables, declaracion, asignacion, tipo_dato;
+non terminal si, ciclo_si, o_si, delo_contrario;
+non terminal while, ciclo_while, not;
 non terminal repetir;
-non terminal metodo1, metodo2, parametro, lista_parametros;
-non terminal funcion1, funcion2, retornar, retornar_valor, ejecutar, ejecutar_sinP, ejecutar_conP;
-non terminal imprimir_sS, imprimir_cS, imprimir1, imprimir2;
+non terminal para, ciclo_para, hacer, con_incremental, lista_para;
+non terminal impresiones, impresionL, impresionM;
+non terminal funcion;
+
 
 precedence left OP_OR;
 precedence left OP_AND;
@@ -63,14 +57,19 @@ precedence right OP_POTENCIA;
 precedence right OP_NOT;
 
 
-
 start with codigo;
 
 codigo ::= PR_INICIO instrucciones PR_FIN;
+
 instrucciones ::= instruccion instrucciones
                   | instruccion;
 instruccion ::= declaracion
                 | asignacion
+                | si
+                | while
+                | repetir
+                | para
+                | impresiones
                 | error;
 declaracion ::= PR_INGRESAR lista_variables PR_COMO tipo_dato PR_CON_VALOR operacion SB_PUNTO_Y_COMA;
 lista_variables ::= IDENTIFICADOR SB_COMA lista_variables
@@ -85,8 +84,9 @@ operacion ::=   operacion OP_SUMA operacion
 		| operacion OP_DIVISION operacion
 		| operacion OP_MODULO operacion
 		| operacion OP_POTENCIA SB_CORCHETE_LEFT operacion SB_CORCHETE_RIGHT
-                | SB_PARENTESIS_LEFT (operacion) SB_PARENTESIS_RIGHT
+                | SB_PARENTESIS_LEFT operacion SB_PARENTESIS_RIGHT
 		| relacional
+                | logicos
                 | dato;
 dato ::=        DIGITOS
                 | CADENA
@@ -104,4 +104,32 @@ relacional ::= 	operacion OP_IGUAL operacion
 		| operacion OP_MENOR_QUE operacion
 		| operacion OP_MAYOR_IGUAL operacion
 		| operacion OP_MENOR_IGUAL operacion;
-asignacion ::= lista_variables PR_ASIGNACION operacion SB_PUNTO_Y_COMA;
+asignacion ::=  lista_variables PR_ASIGNACION operacion SB_PUNTO_Y_COMA;
+
+si ::=          PR_SI ciclo_si PR_FIN_SI;
+ciclo_si ::=    operacion PR_ENTONCES instruccion o_si
+                | ;
+o_si ::=        PR_O_SI operacion PR_ENTONCES instruccion o_si
+                | delo_contrario;
+delo_contrario ::= PR_DE_LO_CONTRARIO instruccion
+                   | ;
+
+while ::=       PR_MIENTRAS ciclo_while PR_FIN_MIENTRAS;
+ciclo_while ::= not operacion PR_HACER instruccion
+                | ;
+not ::=         OP_NOT 
+                | ;
+
+repetir ::=     PR_REPETIR instruccion PR_HASTA_QUE operacion;
+
+para ::=        PR_PARA ciclo_para PR_FIN_PARA;
+ciclo_para ::=  lista_variables PR_ASIGNACION operacion PR_HASTA operacion lista_para;
+lista_para ::=  hacer
+                | con_incremental;
+hacer ::=       PR_HACER instruccion;
+con_incremental ::= PR_CON PR_INCREMENTAL DIGITOS PR_HACER instruccion;
+
+impresiones ::= impresionL
+                | impresionM;
+impresionL ::=  PR_IMPRIMIR operacion SB_PUNTO_Y_COMA;
+impresionM ::=  PR_IMPRIMIR_NL operacion SB_PUNTO_Y_COMA;
