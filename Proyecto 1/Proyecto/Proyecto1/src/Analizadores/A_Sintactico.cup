@@ -10,7 +10,7 @@ parser code
      **/ 
     public void syntax_error(Symbol s){ 
         System.out.println("Error Sintáctico en la Línea " + (s.left) + " Columna "+s.right+ ". No se esperaba este componente: " +s.value);
-        AnalizarArchivo.errores.add(new Error_( "Se detectó un error sintáctico ("+s.value+")", "Sintáctico",s.left, s.right));
+        //AnalizarArchivo.errores.add(new Error_( "Se detectó un error sintáctico ("+s.value+")", "Sintáctico",s.left, s.right));
     } 
 
     /**
@@ -19,7 +19,7 @@ parser code
      **/ 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
         System.out.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido");
-        AnalizarArchivo.errores.add(new Error_( "Se detectó un error sintáctico ("+s.value+")", "Sintáctico",s.left, s.right));
+        //AnalizarArchivo.errores.add(new Error_( "Se detectó un error sintáctico ("+s.value+")", "Sintáctico",s.left, s.right));
     }  
 :}
 
@@ -47,6 +47,7 @@ non terminal impresiones, impresionL, impresionM, impr;
 non terminal metodo, metodo1, metodo2, parametros, lista_parametros, variable;
 non terminal funcion, funcion1, funcion2;
 non terminal retornar, ejecutar, lista_operaciones;
+non terminal comentarios;
 
 
 precedence left OP_OR;
@@ -83,6 +84,7 @@ instruccion ::= declaracion
                 | impresiones
                 | retornar
                 | ejecutar
+                | comentarios
                 | error;
 declaracion ::= PR_INGRESAR lista_variables PR_COMO tipo_dato PR_CON_VALOR operacion SB_PUNTO_Y_COMA;
 lista_variables ::= IDENTIFICADOR SB_COMA lista_variables
@@ -176,3 +178,6 @@ retornar ::=    PR_RETORNAR operacion SB_PUNTO_Y_COMA;
 ejecutar ::=    PR_EJECUTAR lista_variables SB_PARENTESIS_LEFT lista_operaciones SB_PARENTESIS_RIGHT SB_PUNTO_Y_COMA;
 lista_operaciones ::= operacion SB_COMA lista_operaciones
                       | operacion;
+
+comentarios ::= COMENTARIO1
+                | COMENTARIO2;
