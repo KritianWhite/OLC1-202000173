@@ -166,22 +166,25 @@ DIGITOS = [0-9]+("." [0-9]+)?
                 return new Symbol(sym.COMENTARIO1, yycolumn, yyline, yytext());}
 {COMENTARIO_M} {System.out.println("Reconocio COMENTARIO_M, lexema:"+yytext());
                 return new Symbol(sym.COMENTARIO2, yycolumn, yyline, yytext());}
-{CARACTER}  {   cadena = "\""+yytext()+"\"";
+{CARACTER}  {   cadena = yytext();
+                int cad_len = cadena.length();
                 char [] cadena_div = cadena.toCharArray();
                 String n = "";
-                for (int i = 0; i < cadena_div.length; i++){
-                    if (Character.isDigit(cadena_div[i])){
-                        n += cadena_div[i];
-                    }else{
-                        System.out.println("Reconocio CARACTER, lexema:"+yytext());
-                        return new Symbol(sym.CARACTER, yycolumn, yyline, yytext());
-                    };
-                };
-                int num = Integer.parseInt(n);
-                char ch = (char)num;
-
-                System.out.println("Reconocio CARACTER, lexema:"+ch);
-                return new Symbol(sym.CARACTER, yycolumn, yyline, ch);}
+                if (cad_len <= 3){
+                    System.out.println("Reconocio CARACTER, lexema:"+cadena);
+                    return new Symbol(sym.CARACTER, yycolumn, yyline, cadena);
+                }else{
+                    for (int i = 0; i < cadena_div.length; i++){
+                        if (Character.isDigit(cadena_div[i])){
+                            n += cadena_div[i];
+                        }
+                    }
+                    int num = Integer.parseInt(n);
+                    char ch = (char)num;
+                    String s = "\'"+ch+"\'";
+                    System.out.println("Reconocio CARACTER, lexema:"+s);
+                    return new Symbol(sym.CARACTER, yycolumn, yyline, s);
+                }}
 {BOOLEAN}   {   System.out.println("Reconocio BOOLEAN, lexema:"+yytext());
                 return new Symbol(sym.BOOLEAN, yycolumn, yyline, yytext());}
 {IDENTIFICADOR} {System.out.println("Reconocio IDENTIFICADOR, lexema:"+yytext());
