@@ -1,16 +1,19 @@
 package Analizadores;
 import java_cup.runtime.*;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import Error_.*;
 
 parser code 
 {:
+    public  LinkedList<Error_Lex> errores  = new LinkedList<Error_Lex>();
+
     /**
      * Método al que se llama automáticamente ante algún error sintactico.
      **/ 
     public void syntax_error(Symbol s){ 
-        System.out.println("Error Sintáctico en la Línea " + (s.left) + " Columna "+s.right+ ". No se esperaba este componente: " +s.value);
-        //AnalizarArchivo.errores.add(new Error_( "Se detectó un error sintáctico ("+s.value+")", "Sintáctico",s.left, s.right));
+        System.out.println("Error Sintáctico recuperable en la Línea " + (s.left) + " Columna "+s.right+ ". No se esperaba este componente: " +s.value);
+        Error_Lex tmp = new Error_Lex("(Error Sintactico recuperable: " + s.value + ")" , "Sintactico recuperable", (s.left), (s.right));
+        errores.add(tmp);
     } 
 
     /**
@@ -19,7 +22,8 @@ parser code
      **/ 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
         System.out.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido");
-        //AnalizarArchivo.errores.add(new Error_( "Se detectó un error sintáctico ("+s.value+")", "Sintáctico",s.left, s.right));
+        Error_Lex tmp = new Error_Lex("(Error Sintactico irrecuperable: " + s.value + ")" , "Sintactico irrecuperable", (s.left), (s.right));
+        errores.add(tmp);
     }  
 :}
 

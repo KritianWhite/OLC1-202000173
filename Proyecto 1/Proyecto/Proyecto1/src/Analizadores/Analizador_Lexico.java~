@@ -3,6 +3,8 @@
 package Analizadores;
 import Error_.*;
 import java_cup.runtime.*;
+import java.util.LinkedList;
+
 
 
 /**
@@ -386,6 +388,9 @@ public class Analizador_Lexico implements java_cup.runtime.Scanner {
    */
   private int zzFinalHighSurrogate = 0;
 
+  /* user code: */
+    public  LinkedList<Error_Lex> errores  = new LinkedList<Error_Lex>();
+
 
   /**
    * Creates a new scanner
@@ -754,7 +759,8 @@ public class Analizador_Lexico implements java_cup.runtime.Scanner {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
             { System.out.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yycolumn);
-    //AnalizarArchivo.errores.add(new Error_("Se detecto un error lexico (Caracter "+yytext()+")", "Lexico", yyline, yycolumn));
+    Error_Lex tmp = new Error_Lex("(Error lexico: " + yytext() + ")" , "Lexico", yyline, yycolumn);
+    errores.add(tmp);
             } 
             // fall through
           case 70: break;

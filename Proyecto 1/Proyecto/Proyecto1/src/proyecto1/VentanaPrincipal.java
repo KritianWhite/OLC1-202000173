@@ -10,7 +10,7 @@ import java.util.Scanner;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import Analizadores.*;
-import Error_.Error_;
+import Error_.Error_Lex;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;

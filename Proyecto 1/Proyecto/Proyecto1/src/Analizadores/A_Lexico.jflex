@@ -1,12 +1,13 @@
 package Analizadores;
 import Error_.*;
 import java_cup.runtime.*;
+import java.util.LinkedList;
+
 
 %%
-%init{
-    yyline = 1;
-    yycolumn = 1;
-%init}
+%{
+    public  LinkedList<Error_Lex> errores  = new LinkedList<Error_Lex>();
+%}
 
 %public
 %class Analizador_Lexico
@@ -17,6 +18,11 @@ import java_cup.runtime.*;
 %line
 %unicode
 
+%init{
+    yyline = 1;
+    yycolumn = 1;
+%init}
+
 ESPACIOS = [ \t\r\n]+
 COMENTARIO_L = ("//".*\r\n)|("//".*\n)|("//".*\r)
 COMENTARIO_M = "/*""/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/"
@@ -26,6 +32,7 @@ IDENTIFICADOR = [_][a-zA-Z0-9]+[_]
 CARACTER_E = [\"][\\][\"\'n][\"];
 CADENA = [\"][^\"]*[\"]
 DIGITOS = [0-9]+("." [0-9]+)?
+
 %%
 
 "inicio"    {   System.out.println("Reconocio PR_INICIO, lexema:"+yytext());
@@ -171,5 +178,6 @@ DIGITOS = [0-9]+("." [0-9]+)?
                 return new Symbol(sym.DIGITOS, yycolumn, yyline, yytext());}
  . {
     System.out.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yycolumn);
-    //AnalizarArchivo.errores.add(new Error_("Se detecto un error lexico (Caracter "+yytext()+")", "Lexico", yyline, yycolumn));
+    Error_Lex tmp = new Error_Lex("(Error lexico: " + yytext() + ")" , "Lexico", yyline, yycolumn);
+    errores.add(tmp);
 }

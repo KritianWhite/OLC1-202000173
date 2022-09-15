@@ -9,19 +9,20 @@ package Error_;
  *
  * @author kriti
  */
-public class Error_ {
+public class Error_Lex {
     
     private String message;
     private String type;
     private int fila;
     private int columna;
 
-    public Error_(String message, String type, int fila, int columna) {
+    public Error_Lex(String message, String type, int fila, int columna) {
         this.message = message;
         this.type = type;
         this.fila = fila;
         this.columna = columna;
     }
+    
 
     public String getMessage() {
         return message;
