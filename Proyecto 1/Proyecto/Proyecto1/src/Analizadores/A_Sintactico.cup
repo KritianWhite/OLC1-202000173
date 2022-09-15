@@ -35,15 +35,18 @@ terminal String OP_MAYOR_IGUAL, OP_MENOR_IGUAL, SB_CORCHETE_LEFT, SB_CORCHETE_RI
 terminal String SB_PUNTO_Y_COMA, SB_COMA, yycolumn, SB_INTERROGACION_LEFT, SB_INTERROGACION_RIGHT;
 terminal String COMENTARIO1, COMENTARIO2, CARACTER, BOOLEAN, IDENTIFICADOR, CARACTER_E, CADENA, DIGITOS;
 
-non terminal codigo, instrucciones, instruccion;
+non terminal codigo, principal, opciones, instrucciones, instruccion;
 non terminal operacion, dato, relacional, logicos;
 non terminal lista_variables, declaracion, asignacion, tipo_dato;
 non terminal si, ciclo_si, o_si, delo_contrario;
+non terminal segun, caso, casos, segun_contrario;
 non terminal while, ciclo_while, not;
 non terminal repetir;
 non terminal para, ciclo_para, hacer, con_incremental, lista_para;
-non terminal impresiones, impresionL, impresionM;
-non terminal funcion;
+non terminal impresiones, impresionL, impresionM, impr;
+non terminal metodo, metodo1, metodo2, parametros, lista_parametros, variable;
+non terminal funcion, funcion1, funcion2;
+non terminal retornar, ejecutar, lista_operaciones;
 
 
 precedence left OP_OR;
@@ -59,7 +62,14 @@ precedence right OP_NOT;
 
 start with codigo;
 
-codigo ::= PR_INICIO instrucciones PR_FIN;
+codigo ::=      PR_INICIO principal PR_FIN;
+
+principal ::=   opciones principal
+                | opciones;
+
+opciones ::=    instruccion
+                |funcion
+                | metodo;
 
 instrucciones ::= instruccion instrucciones
                   | instruccion;
@@ -67,9 +77,12 @@ instruccion ::= declaracion
                 | asignacion
                 | si
                 | while
+                | segun
                 | repetir
                 | para
                 | impresiones
+                | retornar
+                | ejecutar
                 | error;
 declaracion ::= PR_INGRESAR lista_variables PR_COMO tipo_dato PR_CON_VALOR operacion SB_PUNTO_Y_COMA;
 lista_variables ::= IDENTIFICADOR SB_COMA lista_variables
@@ -107,29 +120,59 @@ relacional ::= 	operacion OP_IGUAL operacion
 asignacion ::=  lista_variables PR_ASIGNACION operacion SB_PUNTO_Y_COMA;
 
 si ::=          PR_SI ciclo_si PR_FIN_SI;
-ciclo_si ::=    operacion PR_ENTONCES instruccion o_si
+ciclo_si ::=    operacion PR_ENTONCES instrucciones o_si
                 | ;
-o_si ::=        PR_O_SI operacion PR_ENTONCES instruccion o_si
+o_si ::=        PR_O_SI operacion PR_ENTONCES instrucciones o_si
                 | delo_contrario;
-delo_contrario ::= PR_DE_LO_CONTRARIO instruccion
+delo_contrario ::= PR_DE_LO_CONTRARIO instrucciones
                    | ;
 
 while ::=       PR_MIENTRAS ciclo_while PR_FIN_MIENTRAS;
-ciclo_while ::= not operacion PR_HACER instruccion
+ciclo_while ::= not operacion PR_HACER instrucciones
                 | ;
 not ::=         OP_NOT 
                 | ;
 
-repetir ::=     PR_REPETIR instruccion PR_HASTA_QUE operacion;
+segun ::=       PR_SEGUN operacion PR_HACER casos PR_FIN_SEGUN;
+casos ::=       caso casos
+                | caso
+                | segun_contrario;
+caso ::=        SB_INTERROGACION_LEFT operacion SB_INTERROGACION_RIGHT PR_ENTONCES
+                instrucciones;
+segun_contrario ::= PR_DE_LO_CONTRARIO PR_ENTONCES instrucciones;
+
+repetir ::=     PR_REPETIR instrucciones PR_HASTA_QUE operacion;
 
 para ::=        PR_PARA ciclo_para PR_FIN_PARA;
 ciclo_para ::=  lista_variables PR_ASIGNACION operacion PR_HASTA operacion lista_para;
 lista_para ::=  hacer
                 | con_incremental;
-hacer ::=       PR_HACER instruccion;
-con_incremental ::= PR_CON PR_INCREMENTAL DIGITOS PR_HACER instruccion;
+hacer ::=       PR_HACER instrucciones;
+con_incremental ::= PR_CON PR_INCREMENTAL DIGITOS PR_HACER instrucciones;
 
 impresiones ::= impresionL
                 | impresionM;
-impresionL ::=  PR_IMPRIMIR operacion SB_PUNTO_Y_COMA;
+impresionL ::=  PR_IMPRIMIR impr;
+impr ::=        operacion SB_PUNTO_Y_COMA
+                | ejecutar;
 impresionM ::=  PR_IMPRIMIR_NL operacion SB_PUNTO_Y_COMA;
+
+metodo ::=      metodo1 
+                | metodo2;
+metodo1 ::=     PR_METODO lista_variables instrucciones PR_FIN_METODO;
+metodo2 ::=     PR_METODO lista_variables parametros instrucciones PR_FIN_METODO;
+parametros ::=  PR_CON_PARAMETROS SB_PARENTESIS_LEFT lista_parametros SB_PARENTESIS_RIGHT;
+lista_parametros ::= variable SB_COMA lista_parametros
+                     | variable;
+variable ::=    lista_variables tipo_dato;
+
+funcion ::=     funcion1 
+                | funcion2;
+funcion1 ::=    PR_FUNCION variable instrucciones PR_FIN_FUNCION;
+funcion2 ::=    PR_FUNCION variable  parametros instrucciones PR_FIN_FUNCION;
+
+retornar ::=    PR_RETORNAR operacion SB_PUNTO_Y_COMA;
+
+ejecutar ::=    PR_EJECUTAR lista_variables SB_PARENTESIS_LEFT lista_operaciones SB_PARENTESIS_RIGHT SB_PUNTO_Y_COMA;
+lista_operaciones ::= operacion SB_COMA lista_operaciones
+                      | operacion;

@@ -754,7 +754,7 @@ public class Analizador_Lexico implements java_cup.runtime.Scanner {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
             { System.out.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yycolumn);
-    AnalizarArchivo.errores.add(new Error_("Se detecto un error lexico (Caracter "+yytext()+")", "Lexico", yyline, yycolumn));
+    //AnalizarArchivo.errores.add(new Error_("Se detecto un error lexico (Caracter "+yytext()+")", "Lexico", yyline, yycolumn));
             } 
             // fall through
           case 70: break;

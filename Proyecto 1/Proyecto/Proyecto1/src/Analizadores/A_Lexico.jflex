@@ -147,9 +147,9 @@ DIGITOS = [0-9]+("." [0-9]+)?
                 return new Symbol(sym.SB_PUNTO_Y_COMA, yycolumn, yyline, yytext());}
 ","         {   System.out.println("Reconocio SB_COMA, lexema:"+yytext());
                 return new Symbol(sym.SB_COMA, yycolumn, yyline, yytext());}
-"¿"         {   System.out.println("Reconocio SB_INTERROGACION_LEFT, lexema:"+yytext());
+[\¿]         {   System.out.println("Reconocio SB_INTERROGACION_LEFT, lexema:"+yytext());
                 return new Symbol(sym.SB_INTERROGACION_LEFT, yycolumn, yyline, yytext());}
-"?"         {   System.out.println("Reconocio SB_INTERROGACION_RIGHT, lexema:"+yytext());
+[\?]        {   System.out.println("Reconocio SB_INTERROGACION_RIGHT, lexema:"+yytext());
                 return new Symbol(sym.SB_INTERROGACION_RIGHT, yycolumn, yyline, yytext());}
 
 {ESPACIOS} {}
@@ -171,5 +171,5 @@ DIGITOS = [0-9]+("." [0-9]+)?
                 return new Symbol(sym.DIGITOS, yycolumn, yyline, yytext());}
  . {
     System.out.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yycolumn);
-    AnalizarArchivo.errores.add(new Error_("Se detecto un error lexico (Caracter "+yytext()+")", "Lexico", yyline, yycolumn));
+    //AnalizarArchivo.errores.add(new Error_("Se detecto un error lexico (Caracter "+yytext()+")", "Lexico", yyline, yycolumn));
 }
