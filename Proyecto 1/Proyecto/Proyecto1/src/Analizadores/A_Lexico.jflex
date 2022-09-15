@@ -7,6 +7,8 @@ import java.util.LinkedList;
 %%
 %{
     public  LinkedList<Error_Lex> errores  = new LinkedList<Error_Lex>();
+    public static String cadena;
+    public static char ch;
 %}
 
 %public
@@ -26,7 +28,7 @@ import java.util.LinkedList;
 ESPACIOS = [ \t\r\n]+
 COMENTARIO_L = ("//".*\r\n)|("//".*\n)|("//".*\r)
 COMENTARIO_M = "/*""/"*([^*/]|[^*]"/"|"*"[^/])*"*"*"*/"
-CARACTER = [\'][ -~]+[\']
+CARACTER = ([\']([^\t\'\"\n]|(\\\")|(\\n)|(\\\')|(\\t))?[\']|\'\$\{\d+\}\')
 BOOLEAN = ("verdadero" | "falso")
 IDENTIFICADOR = [_][a-zA-Z0-9]+[_]
 CARACTER_E = [\"][\\][\"\'n][\"];
@@ -164,8 +166,22 @@ DIGITOS = [0-9]+("." [0-9]+)?
                 return new Symbol(sym.COMENTARIO1, yycolumn, yyline, yytext());}
 {COMENTARIO_M} {System.out.println("Reconocio COMENTARIO_M, lexema:"+yytext());
                 return new Symbol(sym.COMENTARIO2, yycolumn, yyline, yytext());}
-{CARACTER}  {   System.out.println("Reconocio CARACTER, lexema:"+yytext());
-                return new Symbol(sym.CARACTER, yycolumn, yyline, yytext());}
+{CARACTER}  {   cadena = "\""+yytext()+"\"";
+                char [] cadena_div = cadena.toCharArray();
+                String n = "";
+                for (int i = 0; i < cadena_div.length; i++){
+                    if (Character.isDigit(cadena_div[i])){
+                        n += cadena_div[i];
+                    }else{
+                        System.out.println("Reconocio CARACTER, lexema:"+yytext());
+                        return new Symbol(sym.CARACTER, yycolumn, yyline, yytext());
+                    };
+                };
+                int num = Integer.parseInt(n);
+                char ch = (char)num;
+
+                System.out.println("Reconocio CARACTER, lexema:"+ch);
+                return new Symbol(sym.CARACTER, yycolumn, yyline, ch);}
 {BOOLEAN}   {   System.out.println("Reconocio BOOLEAN, lexema:"+yytext());
                 return new Symbol(sym.BOOLEAN, yycolumn, yyline, yytext());}
 {IDENTIFICADOR} {System.out.println("Reconocio IDENTIFICADOR, lexema:"+yytext());

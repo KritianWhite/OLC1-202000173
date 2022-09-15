@@ -110,7 +110,7 @@ operacion ::=   operacion OP_SUMA operacion
 dato ::=        DIGITOS
                 | CADENA
                 | BOOLEAN
-                | CARACTER
+                | CARACTER 
                 | IDENTIFICADOR;
 
 logicos ::= 	operacion OP_OR operacion
