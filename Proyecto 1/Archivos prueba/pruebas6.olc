@@ -1,0 +1,24 @@
+inicio
+
+metodo _metodo_1_
+	imprimir_nl "estamos entrando al metodo 1";	
+	ejecutar _potenciaManual_(3*1+4/2, 3+2);
+	imprimir ejecutar _potenciaFuncion_(3*1+4/2, (3+2));
+	imprimir " Esta es la potencia Funcion";
+fin_metodo
+
+metodo _metodo_2_ con_parametros (_base_ Numero, _exponente_ Numero)
+	ingresar _potencia_ como Numero con_valor _base_ potencia [_exponente_];
+fin_metodo
+
+funcion _potenciaFuncion_ Numero con_parametros (_base_ Numero, _exponente_ Numero) 
+	ingresar _potencia_ como Numero con_valor _base_ potencia [_exponente_];
+	retornar _potencia_;
+fin_funcion
+
+funcion _potenciaFuncion2_ Numero
+	ingresar _potencia_ como Numero con_valor 5 potencia [2];
+	retornar _potencia_;
+fin_funcion
+
+fin

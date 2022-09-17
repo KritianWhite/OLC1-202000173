@@ -1,0 +1,132 @@
+numero _x_ -> 5 + 6
+_x_ -> 14 * 47
+_y_ -> 14.8  
+
+_z_ -> 2 potencia [5];
+
+10 mod 4
+
+"Hola mundo"
+
+caracter -> 'F'
+
+boolean -> Verdadero
+
+caracter -> '${70}'
+
+caracter2 -> ('${102}')
+
+//comentario de una línea
+
+boolean -> Falso
+
+_myname_ -> "Carlos Soto"
+
+_phone1_ -> 45135158
+
+ingresar _nuevaVariable_ como numero con_valor 498524;
+
+
+si _condicion_ entonces
+//instrucciones
+o_si _condicion_nueva_ entonces
+//instrucciones
+de_lo_contrario
+//instrucciones
+fin_si
+
+si _condicion_ entonces
+//instrucciones
+o_si _condicion_nueva_ entonces
+//instrucciones
+o_si _condicion_nueva_ entonces
+//instrucciones
+de_lo_contrario entonces
+//instrucciones
+fin_si
+
+
+segun valor hacer
+¿ _valor1_ ? entonces
+	//instrucciones_para_valor1
+¿ _valor2_ ? entonces
+	//instrucciones_para_valor2
+¿ _valor3_ ? entonces
+	//instrucciones_para_valor3
+de_lo_contrario entonces
+	//instrucciones_por_default
+fin_segun
+
+
+para _variable_ -> _valor_inicial_ hasta _valor_final_ hacer
+ //instrucciones
+fin_para
+para _variable_ -> _valor_inicial_ hasta _valor_final_ hacer
+fin_para
+
+
+para _variable_ -> _valor_inicial_ hasta _valor_final_ con_incremental
+  _Valor_del_salto_ hacer
+	//instrucciones
+fin_para
+
+
+mientras _condicion_ hacer
+	//intrucciones
+fin_mientras
+
+mientras _condicion_ hacer
+	//null
+fin_mientras
+
+
+repetir
+	//instrucciones
+hasta_que _condicion_
+
+repetir
+	//null
+hasta_que _condicion_
+
+
+retornar _expresion_aritmetica_;
+retornar _condicion_;
+retornar _numero_;
+
+
+metodo _nombre_
+   //instrucciones
+fin_metodo
+
+metodo _nombre_ con_parametros (_lista_de_parametros_)
+	//instrucciones
+fin_metodo
+
+funcion _nombre_ cadenA
+	//instrucciones
+fin_funcion
+
+funcion _nombre_ cadEna _con_parametros_ (_lista_de_parametros_)
+	//instrucciones
+fin_funcion
+
+ejecutar _identificador_();
+
+/*   *************** este es 
+un comentario
+multilinea
+*********** */
+
+/* esto es un comentario mas
+	de ejcutar en 
+una vista de revolucion ***
+	*/
+
+ejecutar _identificador_(_lista_de_parametros_);
+
+@####
+
+#@@@
+
+imprimir _expresion_; //impresion sin salto de linea
+imprimir_nl _expresion_; //impresion con salto de linea

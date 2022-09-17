@@ -1,0 +1,47 @@
+inicio
+
+ingresar _ch2_ como caracter con_valor 'G';
+ingresar _varaux_ como numero con_valor 25;
+
+segun _varaux_ hacer
+	¿0? entonces
+		ingresar _val1_,_val2_,_val3_ como numero con_valor 55;
+	¿2? entonces
+		ingresar _val1_,_val2_,_val3_ como numero con_valor 55.6;
+fin_segun
+
+
+segun _varaux1_ hacer
+	¿0? entonces
+		ingresar _val1_,_val2_,_val3_ como numero con_valor 55;
+	¿2? entonces
+		ingresar _val1_,_val2_,_val3_ como numero con_valor 55.6;
+	de_lo_contrario entonces
+    	imprimir_nl "niguno de los dos";
+
+fin_segun
+
+
+para _i_->0 hasta _exponente_-1 hacer
+	_acumulado_ -> _acumulado_ + _acumulado_;
+	imprimir_nl _acumulado_;
+fin_para
+
+para _i_->0 hasta _exponente_-1 con incremental 5 hacer
+	_acumulado_ -> _acumulado_ + _acumulado_;
+fin_para
+
+mientras not (_i_ menor 15 and _i_ mayor 0) hacer
+		ingresar _variable1_ como numero con_valor 5;
+		_variable1_ -> _variable1_ + 1;
+		imprimir _variable1_;
+fin_mientras
+
+mientras _i_ menor 15 and _i_ mayor 0 hacer
+		ingresar _variable1_ como numero con_valor 5;
+		_variable1_ -> _variable1_ + 1;
+		imprimir _variable1_;
+fin_mientras
+
+
+fin

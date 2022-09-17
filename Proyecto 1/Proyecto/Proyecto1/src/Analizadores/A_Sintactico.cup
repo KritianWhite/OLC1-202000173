@@ -2,10 +2,15 @@ package Analizadores;
 import java_cup.runtime.*;
 import java.util.LinkedList;
 import Error_.*;
+import Arbol.Nodo;
 
 parser code 
 {:
     public  LinkedList<Error_Lex> errores  = new LinkedList<Error_Lex>();
+    public static Nodo raiz;
+    public Nodo getRaiz(){
+        return raiz;
+    }
 
     /**
      * Método al que se llama automáticamente ante algún error sintactico.
@@ -39,19 +44,20 @@ terminal String OP_MAYOR_IGUAL, OP_MENOR_IGUAL, SB_CORCHETE_LEFT, SB_CORCHETE_RI
 terminal String SB_PUNTO_Y_COMA, SB_COMA, yycolumn, SB_INTERROGACION_LEFT, SB_INTERROGACION_RIGHT;
 terminal String COMENTARIO1, COMENTARIO2, CARACTER, BOOLEAN, IDENTIFICADOR, CARACTER_E, CADENA, DIGITOS;
 
-non terminal codigo, principal, opciones, instrucciones, instruccion;
-non terminal operacion, dato, relacional, logicos;
-non terminal lista_variables, declaracion, asignacion, tipo_dato;
-non terminal si, ciclo_si, o_si, delo_contrario;
-non terminal segun, caso, casos, segun_contrario;
-non terminal while, ciclo_while, not;
-non terminal repetir;
-non terminal para, ciclo_para, hacer, con_incremental, lista_para;
-non terminal impresiones, impresionL, impresionM, impr;
-non terminal metodo, metodo1, metodo2, parametros, lista_parametros, variable;
-non terminal funcion, funcion1, funcion2;
-non terminal retornar, ejecutar, lista_operaciones;
-non terminal comentarios;
+non terminal Nodo inicio;
+non terminal Nodo codigo, principal, opciones, instrucciones, instruccion;
+non terminal Nodo operacion, dato, relacional, logicos;
+non terminal Nodo lista_variables, declaracion, asignacion, tipo_dato;
+non terminal Nodo si, ciclo_si, o_si, delo_contrario;
+non terminal Nodo segun, caso, casos, segun_contrario;
+non terminal Nodo while, ciclo_while, not;
+non terminal Nodo repetir;
+non terminal Nodo para, ciclo_para, hacer, con_incremental, lista_para;
+non terminal Nodo impresiones, impresionL, impresionM, impr;
+non terminal Nodo metodo, metodo1, metodo2, parametros, lista_parametros, variable;
+non terminal Nodo funcion, funcion1, funcion2;
+non terminal Nodo retornar, ejecutar, lista_operaciones;
+non terminal Nodo comentarios;
 
 
 precedence left OP_OR;
@@ -65,123 +71,537 @@ precedence right OP_POTENCIA;
 precedence right OP_NOT;
 
 
-start with codigo;
+start with inicio;
 
-codigo ::=      PR_INICIO principal PR_FIN;
+inicio ::= codigo:a                {: parser.raiz = a; :}
+           ;
 
-principal ::=   opciones principal
-                | opciones;
+codigo ::=      PR_INICIO:a principal:b PR_FIN:c                                                            {: Nodo padre = new Nodo("codigo", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("inicio", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(new Nodo("fin", c, cright, cleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
 
-opciones ::=    instruccion
-                |funcion
-                | metodo;
+principal ::=   opciones:a principal:b                                                                      {: Nodo padre = new Nodo("principal", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(b);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | opciones:a                                                                                {: Nodo padre = new Nodo("principal", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
 
-instrucciones ::= instruccion instrucciones
-                  | instruccion;
-instruccion ::= declaracion
-                | asignacion
-                | si
-                | while
-                | segun
-                | repetir
-                | para
-                | impresiones
-                | retornar
-                | ejecutar
-                | comentarios
+opciones ::=    instruccion:a                                                                                {: Nodo padre = new Nodo("opciones", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                |funcion:a                                                                                    {: Nodo padre = new Nodo("opciones", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | metodo:a                                                                                  {: Nodo padre = new Nodo("opciones", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+
+instrucciones ::= instruccion:a instrucciones:b                                                             {: Nodo padre = new Nodo("instrucciones", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(b);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                  | instruccion:a                                                                           {: Nodo padre = new Nodo("instrucciones", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                  ;
+instruccion ::= declaracion:a                                                                               {: RESULT = a; :}
+                | asignacion:a                                                                              {: RESULT = a; :}
+                | si:a                                                                                      {: RESULT = a; :}
+                | while:a                                                                                   {: RESULT = a; :}
+                | segun:a                                                                                   {: RESULT = a; :}
+                | repetir:a                                                                                 {: RESULT = a; :}
+                | para:a                                                                                    {: RESULT = a; :}
+                | impresiones:a                                                                             {: RESULT = a; :}
+                | retornar:a                                                                                {: RESULT = a; :}
+                | ejecutar:a                                                                                {: RESULT = a; :}
+                | comentarios:a                                                                             {: RESULT = a; :}
                 | error;
-declaracion ::= PR_INGRESAR lista_variables PR_COMO tipo_dato PR_CON_VALOR operacion SB_PUNTO_Y_COMA;
-lista_variables ::= IDENTIFICADOR SB_COMA lista_variables
-                    | IDENTIFICADOR;
-tipo_dato ::=   PR_NUMERO
-                | PR_CADENA
-                | PR_BOOLEAN
-                | PR_CARACTER;
-operacion ::=   operacion OP_SUMA operacion
-		| operacion OP_RESTA operacion
-		| operacion OP_MULTIPLICACION operacion
-		| operacion OP_DIVISION operacion
-		| operacion OP_MODULO operacion
-		| operacion OP_POTENCIA SB_CORCHETE_LEFT operacion SB_CORCHETE_RIGHT
-                | SB_PARENTESIS_LEFT operacion SB_PARENTESIS_RIGHT
-		| relacional
-                | logicos
-                | dato;
-dato ::=        DIGITOS
-                | CADENA
-                | BOOLEAN
-                | CARACTER 
-                | IDENTIFICADOR;
+declaracion ::= PR_INGRESAR:a lista_variables:b PR_COMO:c tipo_dato:d PR_CON_VALOR:e operacion:f SB_PUNTO_Y_COMA:g  {: Nodo padre = new Nodo("declaracion", "", 0,0);
+                                                                                                                        padre.AddHijo(new Nodo("Ingresar", a, aright, aleft));
+                                                                                                                        padre.AddHijo(b);
+                                                                                                                        padre.AddHijo(new Nodo("como", c, cright, cleft));
+                                                                                                                        padre.AddHijo(d);
+                                                                                                                        padre.AddHijo(new Nodo("valor", e, eright, eleft));
+                                                                                                                        padre.AddHijo(f);
+                                                                                                                        padre.AddHijo(new Nodo("pyc", g, gright, gleft));
+                                                                                                                        RESULT = padre;
+                                                                                                                    :}
+                ;
+lista_variables ::= IDENTIFICADOR:a SB_COMA:b lista_variables:c                                             {: Nodo padre = new Nodo("lista_variables", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("id", a, aright, aleft));
+                                                                                                            padre.AddHijo(new Nodo("coma", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                    | IDENTIFICADOR:a                                                                       {: Nodo padre = new Nodo("lista_variables", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("id", a, aright, aleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                    ;
+tipo_dato ::=   PR_NUMERO:a                                                                                 {: Nodo padre = new Nodo("tipo_dato", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("num", a, aright, aleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | PR_CADENA:a                                                                               {: Nodo padre = new Nodo("tipo_dato", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("cad", a, aright, aleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | PR_BOOLEAN:a                                                                              {: Nodo padre = new Nodo("tipo_dato", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("bool", a, aright, aleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | PR_CARACTER:a                                                                             {: Nodo padre = new Nodo("tipo_dato", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("carac", a, aright, aleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+operacion ::=   operacion:a OP_SUMA:b operacion:c                                                           {: Nodo padre = new Nodo("operacion", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("suma", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+		| operacion:a OP_RESTA:b operacion:c                                                        {: Nodo padre = new Nodo("operacion", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("resta", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+		| operacion:a OP_MULTIPLICACION:b operacion:c                                               {: Nodo padre = new Nodo("operacion", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("por", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+		| operacion:a OP_DIVISION:b operacion:c                                                     {: Nodo padre = new Nodo("operacion", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("div", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+		| operacion:a OP_MODULO:b operacion:c                                                       {: Nodo padre = new Nodo("operacion", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("mod", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+		| operacion:a OP_POTENCIA:b SB_CORCHETE_LEFT:c operacion:d SB_CORCHETE_RIGHT:e              {: Nodo padre = new Nodo("operacion", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("poten", b, bright, bleft));
+                                                                                                            padre.AddHijo(new Nodo("corcL", c, cright, cleft));
+                                                                                                            padre.AddHijo(d);
+                                                                                                            padre.AddHijo(new Nodo("corcR", e, eright, eleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | SB_PARENTESIS_LEFT:a operacion:b SB_PARENTESIS_RIGHT:c                                    {: Nodo padre = new Nodo("operacion", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("parenL", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(new Nodo("parenR", c, cright, cleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+		| relacional:a                                                                              {: RESULT = a; :}
+                | logicos:a                                                                                 {: RESULT = a; :}
+                | dato:a                                                                                    {: RESULT = a; :}
+                ;
+dato ::=        DIGITOS:a                                                                                   {: Nodo padre = new Nodo("dato", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("digit", a, aright, aleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | CADENA:a                                                                                  {: Nodo padre = new Nodo("dato", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("letras", a, aright, aleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | BOOLEAN:a                                                                                 {: Nodo padre = new Nodo("dato", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("vof", a, aright, aleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | CARACTER:a                                                                                {: Nodo padre = new Nodo("dato", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("simb", a, aright, aleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | IDENTIFICADOR:a                                                                           {: Nodo padre = new Nodo("dato", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("id", a, aright, aleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
 
-logicos ::= 	operacion OP_OR operacion
-		| operacion OP_AND operacion
-		| operacion OP_NOT operacion;
+logicos ::= 	operacion:a OP_OR:b operacion:c                                                             {: Nodo padre = new Nodo("logicos", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("or", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+		| operacion:a OP_AND:b operacion:c                                                          {: Nodo padre = new Nodo("logicos", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("and", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+		| operacion:a OP_NOT:b operacion:c                                                          {: Nodo padre = new Nodo("logicos", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("not", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
 
-relacional ::= 	operacion OP_IGUAL operacion
-                | operacion OP_ES_DIFERENTE operacion
-                | operacion OP_MAYOR_QUE operacion
-		| operacion OP_MENOR_QUE operacion
-		| operacion OP_MAYOR_IGUAL operacion
-		| operacion OP_MENOR_IGUAL operacion;
-asignacion ::=  lista_variables PR_ASIGNACION operacion SB_PUNTO_Y_COMA;
+relacional ::= 	operacion:a OP_IGUAL:b operacion:c                                                          {: Nodo padre = new Nodo("relacional", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("igual", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | operacion:a OP_ES_DIFERENTE:b operacion:c                                                 {: Nodo padre = new Nodo("logicos", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("diferen", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | operacion:a OP_MAYOR_QUE:b operacion:c                                                    {: Nodo padre = new Nodo("logicos", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("mayorQ", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+		| operacion:a OP_MENOR_QUE:b operacion:c                                                    {: Nodo padre = new Nodo("logicos", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("menorQ", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+		| operacion:a OP_MAYOR_IGUAL:b operacion:c                                                  {: Nodo padre = new Nodo("logicos", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("mayorI", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+		| operacion:a OP_MENOR_IGUAL:b operacion:c                                                  {: Nodo padre = new Nodo("logicos", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("menorI", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+asignacion ::=  lista_variables:a PR_ASIGNACION:b operacion:c SB_PUNTO_Y_COMA:d                             {: Nodo padre = new Nodo("asignacion", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("asignar", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            padre.AddHijo(new Nodo("pyc", d, dright, dleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
 
-si ::=          PR_SI ciclo_si PR_FIN_SI;
-ciclo_si ::=    operacion PR_ENTONCES instrucciones o_si
+si ::=          PR_SI:a ciclo_si:b PR_FIN_SI:c                                                             {: Nodo padre = new Nodo("si", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("si", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(new Nodo("finsi", c, cright, cleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+ciclo_si ::=    operacion:a PR_ENTONCES:b instrucciones:c o_si:d                                            {: Nodo padre = new Nodo("ciclo_si", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("entonces", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            padre.AddHijo(d);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
                 | ;
-o_si ::=        PR_O_SI operacion PR_ENTONCES instrucciones o_si
-                | delo_contrario;
-delo_contrario ::= PR_DE_LO_CONTRARIO instrucciones
+o_si ::=        PR_O_SI:a operacion:b PR_ENTONCES:c instrucciones:d o_si:e                                  {: Nodo padre = new Nodo("o_si", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("osi", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(new Nodo("entonces", c, cright, cleft));
+                                                                                                            padre.AddHijo(d);
+                                                                                                            padre.AddHijo(e);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | delo_contrario:a                                                                          {: Nodo padre = new Nodo("o_si", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+delo_contrario ::= PR_DE_LO_CONTRARIO:a instrucciones:b                                                     {: Nodo padre = new Nodo("delo_contrario", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("delocon", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
                    | ;
 
-while ::=       PR_MIENTRAS ciclo_while PR_FIN_MIENTRAS;
-ciclo_while ::= not operacion PR_HACER instrucciones
+while ::=       PR_MIENTRAS:a ciclo_while:b PR_FIN_MIENTRAS:c                                               {: Nodo padre = new Nodo("while", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("mient", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(new Nodo("finmient", c, cright, cleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+ciclo_while ::= not:a operacion:b PR_HACER:c instrucciones:d                                                {: Nodo padre = new Nodo("ciclo_while", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(new Nodo("hacer", c, cright, cleft));
+                                                                                                            padre.AddHijo(d);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
                 | ;
-not ::=         OP_NOT 
+not ::=         OP_NOT:a                                                                                    {: Nodo padre = new Nodo("not", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("not", a, aright, aleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
                 | ;
 
-segun ::=       PR_SEGUN operacion PR_HACER casos PR_FIN_SEGUN;
-casos ::=       caso casos
-                | caso
-                | segun_contrario;
-caso ::=        SB_INTERROGACION_LEFT operacion SB_INTERROGACION_RIGHT PR_ENTONCES
-                instrucciones;
-segun_contrario ::= PR_DE_LO_CONTRARIO PR_ENTONCES instrucciones;
+segun ::=       PR_SEGUN:a operacion:b PR_HACER:c casos:d PR_FIN_SEGUN:e                                    {: Nodo padre = new Nodo("segun", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("segun", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(new Nodo("hacer", c, cright, cleft));
+                                                                                                            padre.AddHijo(d);
+                                                                                                            padre.AddHijo(new Nodo("finsegun", e, eright, eleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+casos ::=       caso:a casos:b                                                                              {: Nodo padre = new Nodo("casos", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(b);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | caso:a                                                                                    {: Nodo padre = new Nodo("casos", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | segun_contrario:a                                                                         {: Nodo padre = new Nodo("casos", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+caso ::=        SB_INTERROGACION_LEFT:a operacion:b SB_INTERROGACION_RIGHT:c PR_ENTONCES:d instrucciones:e  {: Nodo padre = new Nodo("caso", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("interrL", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(new Nodo("interrR", c, cright, cleft));
+                                                                                                            padre.AddHijo(new Nodo("entonces", d, dright, dleft));
+                                                                                                            padre.AddHijo(e);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                
+                ;
+segun_contrario ::= PR_DE_LO_CONTRARIO:a PR_ENTONCES:b instrucciones:c                                      {: Nodo padre = new Nodo("segun_contrario", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("delocon", a, aright, aleft));
+                                                                                                            padre.AddHijo(new Nodo("entonces", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                    ;
 
-repetir ::=     PR_REPETIR instrucciones PR_HASTA_QUE operacion;
+repetir ::=     PR_REPETIR:a instrucciones:b PR_HASTA_QUE:c operacion:d                                     {: Nodo padre = new Nodo("repetir", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("repetir", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(new Nodo("hastaQ", c, cright, cleft));
+                                                                                                            padre.AddHijo(d);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
 
-para ::=        PR_PARA ciclo_para PR_FIN_PARA;
-ciclo_para ::=  lista_variables PR_ASIGNACION operacion PR_HASTA operacion lista_para;
-lista_para ::=  hacer
-                | con_incremental;
-hacer ::=       PR_HACER instrucciones;
-con_incremental ::= PR_CON PR_INCREMENTAL DIGITOS PR_HACER instrucciones;
+para ::=        PR_PARA:a ciclo_para:b PR_FIN_PARA:c                                                        {: Nodo padre = new Nodo("para", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("para", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(new Nodo("finpara", c, cright, cleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+ciclo_para ::=  lista_variables:a PR_ASIGNACION:b operacion:c PR_HASTA:d operacion:e lista_para:f           {: Nodo padre = new Nodo("ciclo_para", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("asignar", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            padre.AddHijo(new Nodo("hasta", d, dright, dleft));
+                                                                                                            padre.AddHijo(e);
+                                                                                                            padre.AddHijo(f);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+lista_para ::=  hacer:a                                                                                     {: Nodo padre = new Nodo("lista_para", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | con_incremental:a                                                                         {: Nodo padre = new Nodo("lista_para", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+hacer ::=       PR_HACER:a instrucciones:b                                                                  {: Nodo padre = new Nodo("hacer", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("hacer", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+con_incremental ::= PR_CON:a PR_INCREMENTAL:b DIGITOS:c PR_HACER:d instrucciones:e                          {: Nodo padre = new Nodo("con_incremental", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("con", a, aright, aleft));
+                                                                                                            padre.AddHijo(new Nodo("increm", b, bright, bleft));
+                                                                                                            padre.AddHijo(new Nodo("digit", c, cright, cleft));
+                                                                                                            padre.AddHijo(new Nodo("hacer", d, dright, dleft));
+                                                                                                            padre.AddHijo(e);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                    ;
 
-impresiones ::= impresionL
-                | impresionM;
-impresionL ::=  PR_IMPRIMIR impr;
-impr ::=        operacion SB_PUNTO_Y_COMA
-                | ejecutar;
-impresionM ::=  PR_IMPRIMIR_NL operacion SB_PUNTO_Y_COMA;
+impresiones ::= impresionL:a                                                                                {: Nodo padre = new Nodo("impresiones", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | impresionM:a                                                                              {: Nodo padre = new Nodo("impresiones", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+impresionL ::=  PR_IMPRIMIR:a impr:b                                                                        {: Nodo padre = new Nodo("impresionL", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("impr", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+impr ::=        operacion:a SB_PUNTO_Y_COMA:b                                                               {: Nodo padre = new Nodo("impr", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("pyc", b, aright, bleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | ejecutar:a                                                                                {: Nodo padre = new Nodo("impr", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+impresionM ::=  PR_IMPRIMIR_NL:a operacion:b SB_PUNTO_Y_COMA:c                                              {: Nodo padre = new Nodo("impresionM", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("imprNL", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(new Nodo("pyc", c, cright, cleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
 
-metodo ::=      metodo1 
-                | metodo2;
-metodo1 ::=     PR_METODO lista_variables instrucciones PR_FIN_METODO;
-metodo2 ::=     PR_METODO lista_variables parametros instrucciones PR_FIN_METODO;
-parametros ::=  PR_CON_PARAMETROS SB_PARENTESIS_LEFT lista_parametros SB_PARENTESIS_RIGHT;
-lista_parametros ::= variable SB_COMA lista_parametros
-                     | variable;
-variable ::=    lista_variables tipo_dato;
+metodo ::=      metodo1:a                                                                                   {: Nodo padre = new Nodo("metodo", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | metodo2:a                                                                                 {: Nodo padre = new Nodo("metodo", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+metodo1 ::=     PR_METODO:a lista_variables:b instrucciones:c PR_FIN_METODO:d                               {: Nodo padre = new Nodo("metodo1", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("met", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(c);
+                                                                                                            padre.AddHijo(new Nodo("finmet", d, dright, dleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+metodo2 ::=     PR_METODO:a lista_variables:b parametros:c instrucciones:d PR_FIN_METODO:e                  {: Nodo padre = new Nodo("metodo2", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("met", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(c);
+                                                                                                            padre.AddHijo(d);
+                                                                                                            padre.AddHijo(new Nodo("finmet", e, eright, eleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+parametros ::=  PR_CON_PARAMETROS:a SB_PARENTESIS_LEFT:b lista_parametros:c SB_PARENTESIS_RIGHT:d           {: Nodo padre = new Nodo("parametros", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("conpara", a, aright, aleft));
+                                                                                                            padre.AddHijo(new Nodo("parenL", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            padre.AddHijo(new Nodo("parenR", d, dright, dleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+lista_parametros ::= variable:a SB_COMA:b lista_parametros:c                                                {: Nodo padre = new Nodo("lista_parametros", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("coma", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                     | variable:a                                                                           {: Nodo padre = new Nodo("lista_parametros", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                     ;
+variable ::=    lista_variables:a tipo_dato:b                                                               {: Nodo padre = new Nodo("variable", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(b);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
 
-funcion ::=     funcion1 
-                | funcion2;
-funcion1 ::=    PR_FUNCION variable instrucciones PR_FIN_FUNCION;
-funcion2 ::=    PR_FUNCION variable  parametros instrucciones PR_FIN_FUNCION;
+funcion ::=     funcion1:a                                                                                  {: Nodo padre = new Nodo("funcion", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | funcion2:a                                                                                {: Nodo padre = new Nodo("funcion", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+funcion1 ::=    PR_FUNCION:a variable:b instrucciones:c PR_FIN_FUNCION:d                                    {: Nodo padre = new Nodo("funcion1", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("func", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(c);
+                                                                                                            padre.AddHijo(new Nodo("finfunc", d, dright, dleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
+funcion2 ::=    PR_FUNCION:a variable:b  parametros:c instrucciones:d PR_FIN_FUNCION:e                      {: Nodo padre = new Nodo("funcion2", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("func", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(c);
+                                                                                                            padre.AddHijo(d);
+                                                                                                            padre.AddHijo(new Nodo("finfunc", e, eright, eleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
 
-retornar ::=    PR_RETORNAR operacion SB_PUNTO_Y_COMA;
+retornar ::=    PR_RETORNAR:a operacion:b SB_PUNTO_Y_COMA:c                                                 {: Nodo padre = new Nodo("retornar", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("retor", a, aright, aleft));
+                                                                                                            padre.AddHijo(b);
+                                                                                                            padre.AddHijo(new Nodo("pyc", c, cright, cleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;
 
-ejecutar ::=    PR_EJECUTAR lista_variables SB_PARENTESIS_LEFT lista_operaciones SB_PARENTESIS_RIGHT SB_PUNTO_Y_COMA;
-lista_operaciones ::= operacion SB_COMA lista_operaciones
-                      | operacion;
+ejecutar ::=    PR_EJECUTAR:a lista_variables:b SB_PARENTESIS_LEFT:c lista_operaciones:d SB_PARENTESIS_RIGHT:e SB_PUNTO_Y_COMA:f    {: Nodo padre = new Nodo("ejecutar", "", 0,0);
+                                                                                                                                    padre.AddHijo(new Nodo("ejec", a, aright, aleft));
+                                                                                                                                    padre.AddHijo(b);
+                                                                                                                                    padre.AddHijo(new Nodo("parenL", c, cright, cleft));
+                                                                                                                                    padre.AddHijo(d);
+                                                                                                                                    padre.AddHijo(new Nodo("parenR", e, eright, eleft));
+                                                                                                                                    padre.AddHijo(new Nodo("pyc", f, fright, fleft));
+                                                                                                                                    RESULT = padre;
+                                                                                                                                    :}
+                ;
+lista_operaciones ::= operacion:a SB_COMA:b lista_operaciones:c                                             {: Nodo padre = new Nodo("lista_operaciones", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            padre.AddHijo(new Nodo("coma", b, bright, bleft));
+                                                                                                            padre.AddHijo(c);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                      | operacion:a                                                                         {: Nodo padre = new Nodo("lista_operaciones", "", 0,0);
+                                                                                                            padre.AddHijo(a);
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                      ;
 
-comentarios ::= COMENTARIO1
-                | COMENTARIO2;
+comentarios ::= COMENTARIO1:a                                                                               {: Nodo padre = new Nodo("comentarios", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("coment1", a, aright, aleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                | COMENTARIO2:a                                                                             {: Nodo padre = new Nodo("comentarios", "", 0,0);
+                                                                                                            padre.AddHijo(new Nodo("coment2", a, aright, aleft));
+                                                                                                            RESULT = padre;
+                                                                                                            :}
+                ;

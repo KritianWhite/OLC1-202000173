@@ -1,0 +1,112 @@
+inicio
+
+/*
+
+un error lexico*******
+
+*****/
+
+si _v1_ es_igual _v2_ entonces
+		ingresar _c1_,_c2_,_c3_ como caracter con_valor 'F';
+	o_si _v1_ es_igual 13 entonces
+		    imprimir_nl "mensaje de prueba";
+	o_si _v2_ es_igual 14 entonces
+		    imprimir_nl "mensaje de prueba";
+	de_lo_contrario entonces
+	    ingresar _cadena1_ como cadena con_valor "Hola mundo";
+fin_si
+
+ingresar _variable12_, _variable13_, 
+_variable25_, _variable148b_ag_ como nuMeRO con_valor 25.35;
+
+ingresar _c1_,_c2_,_c3_ como caracter con_valor 'F';
+
+ingresar _ca1_,_ca2_,_ca3_,_ca4_ como caracter con_valor '${70}';
+
+ingresar _cha1_,_cha2_,_cha3_,_cha4_,_cha5_ como caracter con_valor '${111}';
+
+ingresar _cadena1_ como cadena con_valor "Hola mundo";
+
+si _v1_ es_igual _v2_ entonces
+		ingresar _c1_,_c2_,_c3_ como caracter con_valor 'F';
+	o_si _v1_ es_igual 13 entonces
+		imprimir_nl "mensaje de prueba";
+fin_si
+
+ingresar _boolean1_ como boolean con_valor VerDADerO;
+
+_cha4_,_cha5_ -> '${112}';
+
+InGrEsAR _booLEan1_4_ como bOOlean con_valor fALsO;
+
+ingresar _val1_,_val2_,_val3_ como numero con_valor 55;
+
+_val1_,_val2_,_val3_ -> (55*25 potencia [2]) - 15;
+
+si _val1_ es_igual 15 entonces
+	ingresar _boolean1_ como boolean con_valor FaLsO;
+fin_si
+
+_val1_,_val2_,_val3_ -> (55*25 potencia [2]) - 15;
+
+segun _varaux_ hacer
+		¿0? entonces
+			ingresar _val1_,_val2_,_val3_ como numero con_valor 55;
+		¿2? entonces
+			ingresar _val1_,_val2_,_val3_ como numero con_valor 55.6;
+fin_segun
+
+segun (_varaux_) hacer
+		¿(5*5)? entonces
+			ingresar _val1_,_val2_,_val3_ como numero con_valor 55;
+		¿2? entonces
+			ingresar _val1_,_val2_,_val3_ como numero con_valor 55;
+fin_segun
+
+
+para _i_->0 hasta _exponente_-1 hacer
+	_acumulado_ -> _acumulado_ + _acumulado_;
+fin_para
+
+para _i_->0 hasta _exponente_-1 con incremental 5 hacer
+	_acumulado_ -> _acumulado_ + _acumulado_;
+fin_para
+
+mientras not (_variable1_ mayor_o_igual 5*5+8/2) hacer
+	_variable1_ -> _variable1_ + 1;
+fin_mientras
+
+metodo _metodo_1_
+	imprimir_nl "estamos entrando al metodo 1";	
+	ejecutar _potenciaManual_(3*1+4/2, 3+2);
+	imprimir ejecutar _potenciaFuncion_(3*1+4/2, (3+2));
+	imprimir " Esta es la potencia Funcion";
+fin_metodo
+
+metodo _metodo_2_ con_parametros (_base_ Numero, _exponente_ Numero)
+	ingresar _potencia_ como Numero con_valor _base_ potencia [_exponente_];
+fin_metodo
+
+funcion _potenciaFuncion_ Numero con_parametros (_base_ Numero, _exponente_ Numero) 
+	ingresar _potencia_ como Numero con_valor _base_ potencia [_exponente_];
+	retornar _potencia_;
+fin_funcion
+
+funcion _potenciaFuncion2_ Numero
+	ingresar _potencia_ como Numero con_valor 5 potencia [2];
+	retornar _potencia_;
+fin_funcion
+
+//HOLA MUNDO $%^&*()!@#$
+
+ejecutar _metodo_1_();
+ejecutar _metodo_2_(2,(2*2));
+ejecutar _potenciaFuncion_(4,_dos_);
+ejecutar _potenciaFuncion2_();
+
+/*otro 
+	error 
+		lexico
+********	****/
+
+fin

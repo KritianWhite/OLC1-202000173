@@ -1,0 +1,21 @@
+inicio
+
+ingresar _flag1_  como boolean  con_valor verdadero;
+ingresar _flag2_  como boolean  con_valor falso;
+
+
+
+repetir
+    ingresar _flag3_ como boolean con_valor _x_ es_igual 5 and _x_ es_diferente 10;
+    ingresar _flag4_ como boolean con_valor _x_ es_igual 24 or _x_ es_diferente 98;
+    imprimir _flag3_,_flag4_;
+hasta_que (_i_ mayor 10)
+
+repetir
+    ingresar _operacionRela3_ como boolean  con_valor (_operaciones1Basica_+6) Mayor_o_igual 8;
+    ingresar _operacionRela7_ como boolEan con_valor _operaciones1Basica_ es_igual (_operaciones1Basica_)*(8+5);
+    imprimir _operacionRela3_,_operacionRela7_;
+hasta_que _i_ mayor_o_igual 25
+
+
+fin

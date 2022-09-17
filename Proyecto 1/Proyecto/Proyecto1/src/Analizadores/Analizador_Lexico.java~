@@ -858,10 +858,8 @@ public class Analizador_Lexico implements java_cup.runtime.Scanner {
                 char [] cadena_div = cadena.toCharArray();
                 String n = "";
                 if (cad_len <= 3){
-                    char myChar = cadena.charAt(1);
-                    String s1 = "\'"+myChar+"\'";
-                    System.out.println("Reconocio CARACTER, lexema:"+s1);
-                    return new Symbol(sym.CARACTER, yycolumn, yyline, s1);
+                    System.out.println("Reconocio CARACTER, lexema:"+cadena);
+                    return new Symbol(sym.CARACTER, yycolumn, yyline, cadena);
                 }else{
                     for (int i = 0; i < cadena_div.length; i++){
                         if (Character.isDigit(cadena_div[i])){

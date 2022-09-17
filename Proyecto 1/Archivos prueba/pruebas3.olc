@@ -1,0 +1,40 @@
+inicio
+
+ingresar _ch2_ como caracter con_valor 'G';
+ingresar _v1_, _v2_ como numero con_valor 25;
+
+si _v1_ es_igual _v2_ entonces
+	ingresar _c1_ como caracter con_valor 'F';
+	_c1_ -> 'a';
+	imprimir_nl _c1_;
+o_si _v1_ es_igual 15 entonces
+	imprimir_nl "mensaje de prueba";
+fin_si
+
+si _v1_ es_igual 13 entonces
+	ingresar _cadena1_ como cadena con_valor "hola mundo";
+	_cadena1_  -> "prueba de cambio";
+	ejecutar _miMetodo1_();
+	imprimir _cadena1_;
+fin_si
+
+si _v2_ es_igual 19 entonces
+	ingresar _cadena1_ como cadena con_valor "hola mundo";
+	imprimir _cadena1_;
+de_lo_contrario entonces
+	    ingresar _cadena1_ como cadena con_valor "Hola mundo";
+fin_si
+
+si _v1_ es_igual _v2_ entonces
+	ingresar _c1_ como caracter con_valor 'o';
+	imprimir_nl _c1_;
+o_si _v1_ es_igual 12 entonces
+	imprimir_nl "mensaje de prueba 3";
+o_si _v1_ es_igual 18 entonces
+	imprimir_nl "mensaje de prueba 4";
+de_lo_contrario entonces
+	ingresar _cadena1_ como cadena con_valor "Hola mundo";
+fin_si
+
+
+fin

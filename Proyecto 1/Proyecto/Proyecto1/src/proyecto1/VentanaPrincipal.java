@@ -14,6 +14,8 @@ import Error_.Error_Lex;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import Arbol.*;
+import java.io.BufferedReader;
 
 /**
  *
@@ -50,6 +52,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         saveFile = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         flowChart = new javax.swing.JMenuItem();
+        AST = new javax.swing.JMenuItem();
         Errors = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         userManual = new javax.swing.JMenuItem();
@@ -119,6 +122,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
         jMenu2.add(flowChart);
 
+        AST.setText("Abstrac Sintac Tree");
+        AST.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ASTActionPerformed(evt);
+            }
+        });
+        jMenu2.add(AST);
+
         Errors.setText("Errors");
         jMenu2.add(Errors);
 
@@ -165,9 +176,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Run)
                     .addComponent(Clear))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 761, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGap(33, 33, 33)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 746, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(viewGolang, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
                     .addComponent(viewPython, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -205,12 +216,33 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         } catch (Exception ex) {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }//GEN-LAST:event_RunActionPerformed
 
     private void ClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_ClearActionPerformed
+
+    private void ASTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ASTActionPerformed
+        // TODO add your handling code here:
+        Nodo raiz = null;
+
+        try {
+            Analizador_Sintactico sintactico = new Analizador_Sintactico(new Analizador_Lexico(new BufferedReader(new StringReader(jTextArea1.getText()))));
+            sintactico.parse();
+            raiz = sintactico.getRaiz();
+            System.out.println("Abstract sintactic tree generated..!");
+
+        } catch (Exception ex) {
+            Logger.getLogger(Proyecto1.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (raiz != null) {
+            Arbol arbolito = new Arbol(raiz);
+            arbolito.GraficarSintactico();
+        }
+        JOptionPane.showMessageDialog(null, "Analizado con exito", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+
+    }//GEN-LAST:event_ASTActionPerformed
 
     /**
      * @param args the command line arguments
@@ -246,14 +278,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
     }
-    
-    public void leerArchivo(){
-        
+
+    public void leerArchivo() {
+
         // Cargando archivo
         Scanner entrada = null;
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.showOpenDialog(fileChooser);
-        
+
         // Leendo archivo
         String text = "";
         int c = 0;
@@ -261,18 +293,18 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             String ruta = fileChooser.getSelectedFile().getAbsolutePath();
             File file = new File(ruta);
             entrada = new Scanner(file);
-            while(entrada.hasNext()){
-                if (c > 0){
+            while (entrada.hasNext()) {
+                if (c > 0) {
                     text += "\n";
                 }
                 text += entrada.nextLine();
                 c += 1;
             }
-            
+
             //Mostrando en el textArea1
             jTextArea1.setText(text);
             Proyecto1.ruta = ruta;
-            
+
         } catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             jTextArea1.setText("");
@@ -283,13 +315,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             jTextArea1.setText("");
         } finally {
-            if (entrada != null){
+            if (entrada != null) {
                 entrada.close();
             }
         }
-        
+
     }
-    
+
     private void analizadorLexico() throws Exception {
         String text2 = (String) jTextArea1.getText();
         Analizador_Lexico lexico = new Analizador_Lexico(new StringReader(text2));
@@ -299,6 +331,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem AST;
     private javax.swing.JButton Clear;
     private javax.swing.JMenuItem Errors;
     private javax.swing.JButton Run;
