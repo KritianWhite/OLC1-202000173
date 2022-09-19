@@ -404,9 +404,7 @@ public class Analizador_Lexico implements java_cup.runtime.Scanner {
    * @param   in  the java.io.Reader to read input from.
    */
   public Analizador_Lexico(java.io.Reader in) {
-      yyline = 1;
-    yycolumn = 1;
-    this.zzReader = in;
+      this.zzReader = in;
   }
 
 
@@ -659,10 +657,12 @@ public class Analizador_Lexico implements java_cup.runtime.Scanner {
         case '\u2028':  // fall through
         case '\u2029':
           yyline++;
+          yycolumn = 0;
           zzR = false;
           break;
         case '\r':
           yyline++;
+          yycolumn = 0;
           zzR = true;
           break;
         case '\n':
@@ -670,10 +670,12 @@ public class Analizador_Lexico implements java_cup.runtime.Scanner {
             zzR = false;
           else {
             yyline++;
+            yycolumn = 0;
           }
           break;
         default:
           zzR = false;
+          yycolumn += zzCharCount;
         }
       }
 
@@ -766,7 +768,7 @@ public class Analizador_Lexico implements java_cup.runtime.Scanner {
           case 1: 
             { System.out.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yycolumn);
     //lista_E.insertar("Este es un error lexico: "+yytext()+"\"", yytext(), yyline, yycolumn);
-    Errores tmp = new Errores("(Error lexico: " + yytext() + ")" , "Lexico", yyline, yycolumn);
+    Errores tmp = new Errores("Error lexico encontrado: \"" + yytext() + "\"", "Lexico", yyline, yycolumn);
     errores.add(tmp);
             } 
             // fall through

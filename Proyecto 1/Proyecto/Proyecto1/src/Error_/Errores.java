@@ -15,14 +15,12 @@ public class Errores {
     private String type;
     private int fila;
     private int columna;
-    Errores siguiente;
     
     public Errores(){
         this.message = "";
         this.type = "";
         this.fila = 0;
         this.columna = 0;
-        this.siguiente = null;
     }
 
     public Errores(String message, String type, int fila, int columna) {
@@ -30,7 +28,6 @@ public class Errores {
         this.type = type;
         this.fila = fila;
         this.columna = columna;
-        this.siguiente = null;
     }
 
     public String getMessage() {

@@ -800,7 +800,7 @@ public class Analizador_Sintactico extends java_cup.runtime.lr_parser {
     public void syntax_error(Symbol s){ 
         System.out.println("Error Sintáctico recuperable en la Línea " + (s.left) + " Columna "+s.right+ ". No se esperaba este componente: " +s.value);
         //lista_E.insertar("Este es un error Sintactico recuperable: "+s.value+"\"", "Sintactico recuperable", s.left, s.right);
-        Errores tmp = new Errores("(Error Sintactico recuperable: " + s.value + ")" , "Sintactico recuperable", (s.left), (s.right));
+        Errores tmp = new Errores("Error Sintactico recuperable: \"" + s.value + "\"" , "Sintactico recuperable", (s.right) + 1, (s.left) + 1);
         errores.add(tmp);
     } 
 
@@ -811,7 +811,7 @@ public class Analizador_Sintactico extends java_cup.runtime.lr_parser {
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
         System.out.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido");
         //lista_E.insertar("Este es un error sintactico no recuperable: "+s.value+"\"", "Sintactico no recuperable", s.left, s.right);
-        Errores tmp = new Errores("(Error Sintactico no recuperable: " + s.value + ")" , "Sintactico no recuperable", (s.left), (s.right));
+        Errores tmp = new Errores("Error Sintactico no recuperable: \"" + s.value + "\"" , "Sintactico no recuperable", (s.right) + 1, (s.left) + 1);
         errores.add(tmp);
     }  
 

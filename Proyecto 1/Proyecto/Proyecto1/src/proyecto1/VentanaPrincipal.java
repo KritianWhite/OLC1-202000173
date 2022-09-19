@@ -9,17 +9,19 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import Analizadores.*;
-import Error_.*;
+import Analizadores.Analizador_Lexico;
+import Analizadores.Analizador_Sintactico;
+import Error_.Errores;
+import Error_.reportErrors;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import Arbol.*;
 import java.io.BufferedReader;
 import Translate.*;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import static jdk.nashorn.tools.ShellFunctions.input;
 
 /**
  *
@@ -35,8 +37,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }
     Translate trans = new Translate();
-    LinkedList listaErrores = new LinkedList();
-    
+    reportErrors reporte = new reportErrors();
+    //LinkedList listaErrores = new LinkedList();
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -270,10 +272,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenu2ActionPerformed
 
     private void ErrorsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ErrorsActionPerformed
-        
-        Errores erros = new Errores();
-        erros.toString();
-        System.out.println("Soy errores");
+        reportarErrors();
     }//GEN-LAST:event_ErrorsActionPerformed
 
     /**
@@ -359,19 +358,19 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         Analizador_Lexico lexico = new Analizador_Lexico(new StringReader(text2));
         Analizador_Sintactico sintactico = new Analizador_Sintactico(lexico);
         sintactico.parse();
-        //System.out.println(text2);
+        System.out.println(text2);
     }
-    
-    private void saveHow(){
+
+    private void saveHow() {
         JFileChooser save = new JFileChooser();
         save.showSaveDialog(null);
         save.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        
+
         File file = save.getSelectedFile();
         saveFile(jTextArea1.getText(), file);
     }
-    
-    private void saveFile(String cadena, File file){
+
+    private void saveFile(String cadena, File file) {
         FileWriter write;
         try {
             write = new FileWriter(file, true);
@@ -379,13 +378,53 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             write.close();
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(null, "Error al guardar, ingrese el nombre que le desea dar al archivo");
-        } catch (IOException ex){
+        } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Error al guardar, en la salida");
         }
     }
-    
-    private void reportErrors(){
-         
+
+    private void reportarErrors() {
+
+        //Analizador_Lexico lexico;
+        //Analizador_Sintactico sintactico;
+
+        if (jTextArea1.getText() != null) {
+
+            try {
+                Boolean Errores = false;
+                
+                String text2 = (String) jTextArea1.getText();
+                Analizador_Lexico lexico = new Analizador_Lexico(new StringReader(text2));
+                Analizador_Sintactico sintactico = new Analizador_Sintactico(lexico);
+                sintactico.parse();
+                
+                if (lexico.errores.size() > 0 || sintactico.errores.size() > 0) {
+                    if (lexico.errores.size() > 0) {
+                        System.out.println("--------------ERRORES LEXICOS------------");
+                        for (Errores errore : lexico.errores) {
+                            System.out.println(errore.toString());
+                        }
+                    }
+                    if (sintactico.errores.size() > 0) {
+                        System.out.println("------------------ERRORES SINTACTICOS------------------");
+                        for (Errores errore : sintactico.errores) {
+                            System.out.println(errore.toString());
+                        }
+                    }
+                    Errores = true;
+                } else {
+                    System.out.println("No se detectaron errores..");
+                    Errores = false;
+                }
+                System.out.println("Generando reporte de errores....");
+                reporte.GenerarReporte(lexico.errores, sintactico.errores);
+                // incluuir aca reporte de errores
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Ocurrio un error.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No se detecto ningun texto, cargue un archivo o escriba en el area de texto.");
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

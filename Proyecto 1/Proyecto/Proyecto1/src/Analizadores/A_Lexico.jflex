@@ -19,11 +19,10 @@ import java_cup.runtime.*;
 %full
 %ignorecase
 %line
+%column
 %unicode
 
 %init{
-    yyline = 1;
-    yycolumn = 1;
 %init}
 
 ESPACIOS = [ \t\r\n]+
@@ -199,6 +198,6 @@ DIGITOS = [0-9]+("." [0-9]+)?
  . {
     System.out.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yycolumn);
     //lista_E.insertar("Este es un error lexico: "+yytext()+"\"", yytext(), yyline, yycolumn);
-    Errores tmp = new Errores("(Error lexico: " + yytext() + ")" , "Lexico", yyline, yycolumn);
+    Errores tmp = new Errores("Error lexico encontrado: \"" + yytext() + "\"", "Lexico", (yyline) + 1, (yycolumn) + 1);
     errores.add(tmp);
 }
