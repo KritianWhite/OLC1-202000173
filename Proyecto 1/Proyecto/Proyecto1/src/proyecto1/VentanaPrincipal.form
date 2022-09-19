@@ -31,6 +31,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Report"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenu2ActionPerformed"/>
+          </Events>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="flowChart">
               <Properties>
@@ -52,6 +55,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Errors"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ErrorsActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>

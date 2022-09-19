@@ -9,20 +9,29 @@ package Error_;
  *
  * @author kriti
  */
-public class Error_Lex {
-    
+public class Errores {
+
     private String message;
     private String type;
     private int fila;
     private int columna;
+    Errores siguiente;
+    
+    public Errores(){
+        this.message = "";
+        this.type = "";
+        this.fila = 0;
+        this.columna = 0;
+        this.siguiente = null;
+    }
 
-    public Error_Lex(String message, String type, int fila, int columna) {
+    public Errores(String message, String type, int fila, int columna) {
         this.message = message;
         this.type = type;
         this.fila = fila;
         this.columna = columna;
+        this.siguiente = null;
     }
-    
 
     public String getMessage() {
         return message;
@@ -55,6 +64,9 @@ public class Error_Lex {
     public void setColumna(int columna) {
         this.columna = columna;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "Errores{" + "message=" + message + ", type=" + type + ", fila=" + fila + ", columna=" + columna + '}';
+    }
 }

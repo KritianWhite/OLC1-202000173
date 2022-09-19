@@ -1,12 +1,13 @@
 package Analizadores;
-import Error_.*;
-import java_cup.runtime.*;
 import java.util.LinkedList;
+import Error_.Errores;
+import java_cup.runtime.*;
 
 
 %%
 %{
-    public  LinkedList<Error_Lex> errores  = new LinkedList<Error_Lex>();
+    public static LinkedList<Errores> errores  = new LinkedList<Errores>();
+    //LinkedList lista_E = new LinkedList();
     public static String cadena;
     public static char ch;
 %}
@@ -197,6 +198,7 @@ DIGITOS = [0-9]+("." [0-9]+)?
                 return new Symbol(sym.DIGITOS, yycolumn, yyline, yytext());}
  . {
     System.out.println("Este es un error lexico: "+yytext()+", en la linea: "+yyline+", en la columna: "+yycolumn);
-    Error_Lex tmp = new Error_Lex("(Error lexico: " + yytext() + ")" , "Lexico", yyline, yycolumn);
+    //lista_E.insertar("Este es un error lexico: "+yytext()+"\"", yytext(), yyline, yycolumn);
+    Errores tmp = new Errores("(Error lexico: " + yytext() + ")" , "Lexico", yyline, yycolumn);
     errores.add(tmp);
 }

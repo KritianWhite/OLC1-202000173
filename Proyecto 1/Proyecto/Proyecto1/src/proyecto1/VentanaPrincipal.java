@@ -10,12 +10,16 @@ import java.util.Scanner;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import Analizadores.*;
-import Error_.Error_Lex;
+import Error_.*;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import Arbol.*;
 import java.io.BufferedReader;
+import Translate.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import static jdk.nashorn.tools.ShellFunctions.input;
 
 /**
  *
@@ -30,6 +34,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
     }
+    Translate trans = new Translate();
+    LinkedList listaErrores = new LinkedList();
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -113,6 +120,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Report");
+        jMenu2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenu2ActionPerformed(evt);
+            }
+        });
 
         flowChart.setText("Flowchart");
         flowChart.addActionListener(new java.awt.event.ActionListener() {
@@ -131,6 +143,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jMenu2.add(AST);
 
         Errors.setText("Errors");
+        Errors.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ErrorsActionPerformed(evt);
+            }
+        });
         jMenu2.add(Errors);
 
         jMenuBar1.add(jMenu2);
@@ -195,6 +212,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void saveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileActionPerformed
         // TODO add your handling code here:
+        saveHow();
     }//GEN-LAST:event_saveFileActionPerformed
 
     private void flowChartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_flowChartActionPerformed
@@ -207,6 +225,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void viewPythonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewPythonActionPerformed
         // TODO add your handling code here:
+        //trans.DeclaracionPY("_hola_", "100");
+        trans.printCode();
     }//GEN-LAST:event_viewPythonActionPerformed
 
     private void RunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RunActionPerformed
@@ -221,6 +241,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void ClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearActionPerformed
         // TODO add your handling code here:
+        jTextArea1.setText("");
     }//GEN-LAST:event_ClearActionPerformed
 
     private void ASTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ASTActionPerformed
@@ -241,8 +262,19 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             arbolito.GraficarSintactico();
         }
         JOptionPane.showMessageDialog(null, "Analizado con exito", "Informacion", JOptionPane.INFORMATION_MESSAGE);
-
+        trans.printCode();
     }//GEN-LAST:event_ASTActionPerformed
+
+    private void jMenu2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenu2ActionPerformed
+
+    private void ErrorsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ErrorsActionPerformed
+        
+        Errores erros = new Errores();
+        erros.toString();
+        System.out.println("Soy errores");
+    }//GEN-LAST:event_ErrorsActionPerformed
 
     /**
      * @param args the command line arguments
@@ -328,6 +360,32 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         Analizador_Sintactico sintactico = new Analizador_Sintactico(lexico);
         sintactico.parse();
         //System.out.println(text2);
+    }
+    
+    private void saveHow(){
+        JFileChooser save = new JFileChooser();
+        save.showSaveDialog(null);
+        save.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        
+        File file = save.getSelectedFile();
+        saveFile(jTextArea1.getText(), file);
+    }
+    
+    private void saveFile(String cadena, File file){
+        FileWriter write;
+        try {
+            write = new FileWriter(file, true);
+            write.write(cadena);
+            write.close();
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(null, "Error al guardar, ingrese el nombre que le desea dar al archivo");
+        } catch (IOException ex){
+            JOptionPane.showMessageDialog(null, "Error al guardar, en la salida");
+        }
+    }
+    
+    private void reportErrors(){
+         
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

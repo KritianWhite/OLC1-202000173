@@ -31,5 +31,4 @@ public class Nodo {
     public void AddHijo(Nodo nuevo){
         this.hijos.add(nuevo);
     }
-    
 }

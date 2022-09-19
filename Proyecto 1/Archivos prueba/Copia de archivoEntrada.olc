@@ -150,14 +150,3 @@ ejecutar _metodo_1_();
 fin
 
 
-
-
-
-
-
-
-
-else{
-                        System.out.println("Reconocio CARACTER, lexema:"+yytext());
-                        return new Symbol(sym.CARACTER, yycolumn, yyline, yytext());
-                    };

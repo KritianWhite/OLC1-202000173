@@ -1,0 +1,13 @@
+inicio
+
+$  //error lexico
+
+# //error lexico 2
+
+ingresar _x_  cadena con_valor "hola mundo";
+
+
+ingresar _y_ como cadena con_valor "hola mundo";
+
+
+fin

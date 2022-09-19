@@ -37,6 +37,7 @@ public class Arbol {
     private String GraficaNodos(Nodo nodo, String i) {
         int k = 0;
         String r = "";
+
         String nodoTerm = nodo.token;
         nodoTerm = nodoTerm.replace("\"", "");
         r = "node" + i + "[label = \"" + nodoTerm + "\"];\n";
@@ -60,11 +61,7 @@ public class Arbol {
         //FileWriter fichero = null;
         //PrintWriter escritor = null;
         graficar(cadena);
-        
-        
-        
-        
-        
+
         /*
         try {
             fichero = new FileWriter("Arbol_Sintactico.dot");
@@ -165,7 +162,7 @@ public class Arbol {
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write(dot.toString());
             bw.close();
-            ProcessBuilder pbuilder = new ProcessBuilder("dot", "-Tpng", "-o", "Arbol_Sintactico.png", "Graf.dot");
+            ProcessBuilder pbuilder = new ProcessBuilder("dot", "-Tsvg", "-o", "Arbol_Sintactico.svg", "GrafoAST.dot");
             pbuilder.redirectErrorStream(true);
             System.out.println("Terminando...");
             pbuilder.start();
@@ -175,5 +172,5 @@ public class Arbol {
         }
 
     }
-
+    
 }
