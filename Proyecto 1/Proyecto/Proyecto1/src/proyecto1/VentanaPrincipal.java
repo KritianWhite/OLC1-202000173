@@ -11,18 +11,21 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import Analizadores.Analizador_Lexico;
 import Analizadores.Analizador_Sintactico;
+import Analizadores.Lexer;
+import Analizadores.parser;
 import Error_.Errores;
 import Error_.reportErrors;
 import java.io.StringReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import Arbol.*;
+import java.awt.Desktop;
 import java.io.BufferedReader;
-import Translate.*;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-
+import proyecto1.NumeroLinea;
 /**
  *
  * @author kriti
@@ -32,13 +35,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     /**
      * Creates new form VentanaPrincipal
      */
+    NumeroLinea numeroLinea;
+
     public VentanaPrincipal() {
         initComponents();
         setLocationRelativeTo(null);
+        numeroLinea = new NumeroLinea(jTextArea1);
+        jScrollPane1.setRowHeaderView(numeroLinea);
     }
-    Translate trans = new Translate();
     reportErrors reporte = new reportErrors();
-    //LinkedList listaErrores = new LinkedList();
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -157,9 +163,19 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jMenu3.setText("View");
 
         userManual.setText("User manual");
+        userManual.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                userManualActionPerformed(evt);
+            }
+        });
         jMenu3.add(userManual);
 
         technicalManual.setText("Technical manual");
+        technicalManual.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                technicalManualActionPerformed(evt);
+            }
+        });
         jMenu3.add(technicalManual);
 
         jMenuBar1.add(jMenu3);
@@ -227,18 +243,18 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void viewPythonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewPythonActionPerformed
         // TODO add your handling code here:
-        //trans.DeclaracionPY("_hola_", "100");
-        trans.printCode();
     }//GEN-LAST:event_viewPythonActionPerformed
 
     private void RunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RunActionPerformed
-        try {
-            // TODO add your handling code here:
-            analizadorLexico();
-        } catch (Exception ex) {
-            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        if (jTextArea1.getText() != null) {
+            try {
+                analizadorLexico();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Ocurrio un error.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No se detecto ningun texto, cargue un archivo o escriba en el area de texto.");
         }
-
     }//GEN-LAST:event_RunActionPerformed
 
     private void ClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ClearActionPerformed
@@ -254,7 +270,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             Analizador_Sintactico sintactico = new Analizador_Sintactico(new Analizador_Lexico(new BufferedReader(new StringReader(jTextArea1.getText()))));
             sintactico.parse();
             raiz = sintactico.getRaiz();
-            System.out.println("Abstract sintactic tree generated..!");
+            System.out.println("Generando arbol sintactico..!");
+            
 
         } catch (Exception ex) {
             Logger.getLogger(Proyecto1.class.getName()).log(Level.SEVERE, null, ex);
@@ -262,9 +279,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         if (raiz != null) {
             Arbol arbolito = new Arbol(raiz);
             arbolito.GraficarSintactico();
+            
         }
         JOptionPane.showMessageDialog(null, "Analizado con exito", "Informacion", JOptionPane.INFORMATION_MESSAGE);
-        trans.printCode();
+        abrirArchivos("Arbol_Sintactico.svg");
     }//GEN-LAST:event_ASTActionPerformed
 
     private void jMenu2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenu2ActionPerformed
@@ -273,7 +291,18 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void ErrorsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ErrorsActionPerformed
         reportarErrors();
+        abrirArchivos("Reporte errores.html");
     }//GEN-LAST:event_ErrorsActionPerformed
+
+    private void userManualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userManualActionPerformed
+        // TODO add your handling code here:
+        abrirArchivos("C:\\Users\\kriti\\OneDrive\\Documents\\GitHub\\OLC1-202000173\\Proyecto 1\\Documentacion\\Manual usuario.pdf");
+    }//GEN-LAST:event_userManualActionPerformed
+
+    private void technicalManualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_technicalManualActionPerformed
+        // TODO add your handling code here:
+        abrirArchivos("C:\\Users\\kriti\\OneDrive\\Documents\\GitHub\\OLC1-202000173\\Proyecto 1\\Documentacion\\Manual tecnico.pdf");
+    }//GEN-LAST:event_technicalManualActionPerformed
 
     /**
      * @param args the command line arguments
@@ -358,7 +387,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         Analizador_Lexico lexico = new Analizador_Lexico(new StringReader(text2));
         Analizador_Sintactico sintactico = new Analizador_Sintactico(lexico);
         sintactico.parse();
-        System.out.println(text2);
+        //System.out.println(text2);
     }
 
     private void saveHow() {
@@ -387,17 +416,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         //Analizador_Lexico lexico;
         //Analizador_Sintactico sintactico;
-
         if (jTextArea1.getText() != null) {
 
             try {
                 Boolean Errores = false;
-                
+
                 String text2 = (String) jTextArea1.getText();
                 Analizador_Lexico lexico = new Analizador_Lexico(new StringReader(text2));
                 Analizador_Sintactico sintactico = new Analizador_Sintactico(lexico);
                 sintactico.parse();
-                
+
                 if (lexico.errores.size() > 0 || sintactico.errores.size() > 0) {
                     if (lexico.errores.size() > 0) {
                         System.out.println("--------------ERRORES LEXICOS------------");
@@ -424,6 +452,23 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         } else {
             JOptionPane.showMessageDialog(null, "No se detecto ningun texto, cargue un archivo o escriba en el area de texto.");
+        }
+    }
+
+    private void abrirArchivos(String nombre) {
+        try {
+            File file = new File(nombre);
+            if (!Desktop.isDesktopSupported()) {
+                System.out.println("not supported");
+                return;
+            }
+            Desktop desktop = Desktop.getDesktop();
+            if (file.exists()) {
+                System.out.println("Abriendo archivo.");
+            }
+            desktop.open(file);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -70,11 +70,17 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="User manual"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="userManualActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="technicalManual">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Technical manual"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="technicalManualActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>

@@ -6,21 +6,20 @@ import Arbol.Nodo;
 
 parser code 
 {:
-    public static LinkedList<Errores> errores  = new LinkedList<Errores>();
-    //LinkedList lista_E = new LinkedList();
-    public static Nodo raiz;
-    public Nodo getRaiz(){
-        return raiz;
-    }
+    //public static LinkedList<Errores> errores  = new LinkedList<Errores>();
+    //public static Nodo raiz;
+    //public Nodo getRaiz(){
+    //    return raiz;
+    //}
+
 
     /**
      * Método al que se llama automáticamente ante algún error sintactico.
      **/ 
     public void syntax_error(Symbol s){ 
         System.out.println("Error Sintáctico recuperable en la Línea " + (s.left) + " Columna "+s.right+ ". No se esperaba este componente: " +s.value);
-        //lista_E.insertar("Este es un error Sintactico recuperable: "+s.value+"\"", "Sintactico recuperable", s.left, s.right);
-        Errores tmp = new Errores("(Error Sintactico recuperable: " + s.value + ")" , "Sintactico recuperable", (s.left), (s.right));
-        errores.add(tmp);
+        //Errores tmp = new Errores("(Error Sintactico recuperable: " + s.value + ")" , "Sintactico recuperable", (s.left), (s.right));
+        //errores.add(tmp);
     } 
 
     /**
@@ -29,10 +28,10 @@ parser code
      **/ 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
         System.out.println("Error síntactico irrecuperable en la Línea " + (s.left)+ " Columna "+s.right+". Componente " + s.value + " no reconocido");
-        //lista_E.insertar("Este es un error sintactico no recuperable: "+s.value+"\"", "Sintactico no recuperable", s.left, s.right);
-        Errores tmp = new Errores("(Error Sintactico no recuperable: " + s.value + ")" , "Sintactico no recuperable", (s.left), (s.right));
-        errores.add(tmp);
-    }  
+        //Errores tmp = new Errores("(Error Sintactico no recuperable: " + s.value + ")" , "Sintactico no recuperable", (s.left), (s.right));
+        //errores.add(tmp);
+    }
+    
 :}
 
 terminal String PR_INICIO, PR_FIN, PR_INGRESAR, PR_COMO, PR_CON_VALOR, PR_ASIGNACION, PR_SI;
@@ -47,7 +46,7 @@ terminal String OP_MAYOR_IGUAL, OP_MENOR_IGUAL, SB_CORCHETE_LEFT, SB_CORCHETE_RI
 terminal String SB_PUNTO_Y_COMA, SB_COMA, yycolumn, SB_INTERROGACION_LEFT, SB_INTERROGACION_RIGHT;
 terminal String COMENTARIO1, COMENTARIO2, CARACTER, BOOLEAN, IDENTIFICADOR, CARACTER_E, CADENA, DIGITOS;
 
-non terminal codigo, principal, opciones, instrucciones, instruccion;
+non terminal inicio, codigo, principal, opciones, instrucciones, instruccion;
 non terminal operacion, dato, relacional, logicos;
 non terminal lista_variables, declaracion, asignacion, tipo_dato;
 non terminal si, ciclo_si, o_si, delo_contrario;
@@ -73,8 +72,8 @@ precedence right OP_POTENCIA;
 precedence right OP_NOT;
 
 
-start with codigo;
-
+start with inicio;
+inicio ::= codigo;
 codigo ::=      PR_INICIO principal PR_FIN;
 
 principal ::=   opciones principal
@@ -85,7 +84,8 @@ opciones ::=    instruccion
                 | metodo;
 
 instrucciones ::= instruccion instrucciones
-                  | instruccion;
+                  | instruccion
+                    ;
 instruccion ::= declaracion
                 | asignacion
                 | si

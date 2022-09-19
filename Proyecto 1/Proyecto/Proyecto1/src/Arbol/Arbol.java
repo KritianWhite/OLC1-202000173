@@ -28,7 +28,7 @@ public class Arbol {
 
     public void GraficarSintactico() {
         String grafica = "Digraph Arbol_Sintactico{\n\n" + GraficaNodos(this.raiz, "0") + "\n\n}";
-        System.out.println(grafica);
+        //System.out.println(grafica);
         //GenerarDot(grafica);
         graficar(grafica);
 
@@ -37,7 +37,6 @@ public class Arbol {
     private String GraficaNodos(Nodo nodo, String i) {
         int k = 0;
         String r = "";
-
         String nodoTerm = nodo.token;
         nodoTerm = nodoTerm.replace("\"", "");
         r = "node" + i + "[label = \"" + nodoTerm + "\"];\n";
@@ -54,6 +53,7 @@ public class Arbol {
             r += "node" + i + "c[label = \"" + nodoToken + "\"];\n";
             r += "node" + i + " -> node" + i + "c\n";
         }
+
         return r;
     }
 
@@ -170,7 +170,6 @@ public class Arbol {
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
-
+        System.out.println("Arbol sintactico graficado.");
     }
-    
 }
