@@ -239,6 +239,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void viewGolangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewGolangActionPerformed
         // TODO add your handling code here:
+        JOptionPane.showMessageDialog(null, "Pido perdon y compasión :(");
     }//GEN-LAST:event_viewGolangActionPerformed
 
     private void viewPythonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewPythonActionPerformed

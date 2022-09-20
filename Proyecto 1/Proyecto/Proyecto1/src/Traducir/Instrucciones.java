@@ -9,6 +9,8 @@ package Traducir;
  *
  * @author kriti
  */
-public class salidaPY {
+public interface Instrucciones {
+    
+    public String traducir();
     
 }

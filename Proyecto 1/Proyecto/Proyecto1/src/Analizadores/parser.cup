@@ -3,7 +3,8 @@ import java_cup.runtime.*;
 import java.util.LinkedList;
 import Error_.Errores;
 import Arbol.Nodo;
-import Traducir.salidaPY;
+import Traducir.*;
+
 
 parser code 
 {:
@@ -12,9 +13,7 @@ parser code
     //public Nodo getRaiz(){
     //    return raiz;
     //}
-    salidaPY salidaPY;
-    public static String strPython = "";
-    public static String tmpPY = "";
+    public LinkedList<Instrucciones> AST;
 
     /**
      * Método al que se llama automáticamente ante algún error sintactico.
@@ -35,6 +34,9 @@ parser code
         //errores.add(tmp);
     }
     
+    public LinkedList<Instrucciones> getAST(){
+        return AST;
+    }
 :}
 
 terminal String PR_INICIO, PR_FIN, PR_INGRESAR, PR_COMO, PR_CON_VALOR, PR_ASIGNACION, PR_SI;
@@ -49,9 +51,11 @@ terminal String OP_MAYOR_IGUAL, OP_MENOR_IGUAL, SB_CORCHETE_LEFT, SB_CORCHETE_RI
 terminal String SB_PUNTO_Y_COMA, SB_COMA, yycolumn, SB_INTERROGACION_LEFT, SB_INTERROGACION_RIGHT;
 terminal String COMENTARIO1, COMENTARIO2, CARACTER, BOOLEAN, IDENTIFICADOR, CARACTER_E, CADENA, DIGITOS;
 
-non terminal inicio, codigo, principal, opciones, instrucciones, instruccion;
+non terminal inicio, codigo, principal, opciones, instruccion;
+non terminal LinkedList<Instrucciones> instrucciones;
 non terminal operacion, dato, relacional, logicos;
-non terminal lista_variables, declaracion, asignacion, tipo_dato;
+non terminal declaracion, asignacion, tipo_dato;
+non terminal LinkedList<String> lista_variables;
 non terminal si, ciclo_si, o_si, delo_contrario;
 non terminal segun, caso, casos, segun_contrario;
 non terminal while, ciclo_while, not;
@@ -77,28 +81,18 @@ precedence right OP_NOT;
 
 start with inicio;
 inicio ::= codigo;
-codigo ::=      PR_INICIO principal PR_FIN;
+codigo ::=      PR_INICIO:a principal:b PR_FIN:c    {: parser.AST=b; :}
+                | PR_INICIO PR_FIN;
 
 principal ::=   opciones principal
                 | opciones;
 
-opciones ::=    instruccion:a
-{:
-    if(a != null){}{
-        System.err.println(a+"hola");
-        tmpPY += a.toString();
-    }
-    strPython += tmpPY + "\n";
-    System.out.println("\n"+strPython +"\n");
-    salidaPY(strPython);
-    strPython = "";
-
-:} 
+opciones ::=    instruccion
                 |funcion
                 | metodo;
 
-instrucciones ::= instruccion instrucciones
-                  | instruccion
+instrucciones ::= instruccion:b instrucciones:a     {: RESULT=a; RESULT=b; :}
+                  | instruccion:a                   {: RESULT= new LinkedList<>(); RESULT.add(a); :}
                     ;
 instruccion ::= declaracion
                 | asignacion
@@ -183,7 +177,8 @@ impresiones ::= impresionL
 impresionL ::=  PR_IMPRIMIR impr;
 impr ::=        operacion SB_PUNTO_Y_COMA
                 | ejecutar;
-impresionM ::=  PR_IMPRIMIR_NL operacion SB_PUNTO_Y_COMA;
+impresionM ::=  PR_IMPRIMIR_NL:a operacion:b SB_PUNTO_Y_COMA:c    {: RESULT=new Imprimir(b,1); :}
+                ;
 
 metodo ::=      metodo1 
                 | metodo2;
