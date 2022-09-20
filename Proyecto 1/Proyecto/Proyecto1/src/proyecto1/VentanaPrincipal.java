@@ -243,6 +243,18 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     private void viewPythonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewPythonActionPerformed
         // TODO add your handling code here:
+        if (jTextArea1.getText() != null) {
+            try {
+                Lexer lex = new Lexer(new StringReader(jTextArea1.getText()));
+                parser sin = new parser(lex);
+                sin.parse();
+                System.out.println("Si entreee");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Ocurrio un error.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No se detecto ningun texto, cargue un archivo o escriba en el area de texto.");
+        }
     }//GEN-LAST:event_viewPythonActionPerformed
 
     private void RunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RunActionPerformed

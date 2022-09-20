@@ -9,6 +9,7 @@ import java_cup.runtime.*;
 import java.util.LinkedList;
 import Error_.Errores;
 import Arbol.Nodo;
+import Traducir.salidaPY;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
@@ -792,7 +793,9 @@ public class parser extends java_cup.runtime.lr_parser {
     //public Nodo getRaiz(){
     //    return raiz;
     //}
-
+    salidaPY salidaPY;
+    public static String strPython = "";
+    public static String tmpPY = "";
 
     /**
      * Método al que se llama automáticamente ante algún error sintactico.
@@ -893,6 +896,19 @@ class CUP$parser$actions {
           case 5: // opciones ::= instruccion 
             {
               Object RESULT =null;
+		int aleft = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).left;
+		int aright = ((java_cup.runtime.Symbol)CUP$parser$stack.peek()).right;
+		Object a = (Object)((java_cup.runtime.Symbol) CUP$parser$stack.peek()).value;
+		
+    if(a != null){}{
+        System.err.println(a+"hola");
+        tmpPY += a.toString();
+    }
+    strPython += tmpPY + "\n";
+    System.out.println("\n"+strPython +"\n");
+    salidaPY(strPython);
+    strPython = "";
+
 
               CUP$parser$result = parser.getSymbolFactory().newSymbol("opciones",3, ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$parser$stack.peek()), RESULT);
             }
@@ -1793,6 +1809,10 @@ class CUP$parser$actions {
                                CUP$parser$stack,
                                CUP$parser$top);
     }
-}
+
+        private void salidaPY(String cadena) {
+            System.out.println(cadena);
+        }
+    }
 
 }

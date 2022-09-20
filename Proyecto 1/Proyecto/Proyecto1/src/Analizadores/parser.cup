@@ -3,6 +3,7 @@ import java_cup.runtime.*;
 import java.util.LinkedList;
 import Error_.Errores;
 import Arbol.Nodo;
+import Traducir.salidaPY;
 
 parser code 
 {:
@@ -11,7 +12,9 @@ parser code
     //public Nodo getRaiz(){
     //    return raiz;
     //}
-
+    salidaPY salidaPY;
+    public static String strPython = "";
+    public static String tmpPY = "";
 
     /**
      * Método al que se llama automáticamente ante algún error sintactico.
@@ -79,7 +82,18 @@ codigo ::=      PR_INICIO principal PR_FIN;
 principal ::=   opciones principal
                 | opciones;
 
-opciones ::=    instruccion
+opciones ::=    instruccion:a
+{:
+    if(a != null){}{
+        System.err.println(a+"hola");
+        tmpPY += a.toString();
+    }
+    strPython += tmpPY + "\n";
+    System.out.println("\n"+strPython +"\n");
+    salidaPY(strPython);
+    strPython = "";
+
+:} 
                 |funcion
                 | metodo;
 
