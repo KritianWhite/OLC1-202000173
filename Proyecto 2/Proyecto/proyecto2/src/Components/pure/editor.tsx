@@ -9,7 +9,7 @@ export const Editor = () => {
         <CodeMirror
           value=""
           width='400'
-          height="500px"
+          height="600px"
           theme={dracula}
           extensions={[javascript({ jsx: true })]}
           onChange={(value, viewUpdate) => {
