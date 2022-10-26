@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import CodeMirror from "@uiw/react-codemirror";
 import { dracula } from "@uiw/codemirror-theme-dracula";
 import { javascript } from "@codemirror/lang-javascript";
 
 export const Editor = () => {
+  
+  const [myValue, setMyValue] = useState('');
+
   return (
         <CodeMirror
           value=""
@@ -28,3 +31,4 @@ export const Editor = () => {
     // </div>
   );
 };
+
