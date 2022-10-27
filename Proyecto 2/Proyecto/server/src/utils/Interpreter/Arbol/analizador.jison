@@ -1,7 +1,20 @@
+// Importaciones 
+%{
+  const controller = require('../../../controller/parser/parser');
+  const errores = require('./Errors/error');
+  const Tipo = require('./Symbol/Type');
+  const nativo = require('./Expresions/Native')
+  const impresion = require('./Instructions/Imprimir');
+  const declaracion = require('./Instructions/Declaracion')
+
+%}
+
+
+
 /**Definición lexica*/
 %lex
 
-%options case-sensitive
+%options case-insensitive
 
 %%
 
@@ -13,7 +26,7 @@
 // Palabras reservadas
 'int' return 'pr_int';
 'double' return 'pr_double';
-'boolean' return 'pr_char';
+'boolean' return 'pr_boolean';
 'char' return 'pr_char';
 'string' return 'pr_string';
 'new' return 'pr_new';
@@ -56,6 +69,7 @@
 '(' return 'sb_parentesisL';
 ')' return 'sb_parentesisR';
 ':' return 'sb_dosPuntos';
+';' return 'sb_pyc';
 '{' return 'sb_llaveL';
 '}' return 'sb_llaveR';
 '++' return 'sb_incremento';
@@ -65,31 +79,26 @@
 
 
 // Patrones (Expresiones regulares [ER])
-\"[^\"]*\"			{ yytext = yytext.substr(0,yyleng-0); return 'cadena'; }
+[ \r\t]+ { } //Espacios, tabulaciones, carritos..
+\n {}        // Saltos de linea
+^\d+$           { yytext = yytext.substr(0,yyleng-0); return 'entero'; }
+^\d*\.\d+$      { yytext = yytext.substr(0,yyleng-0); return 'double'; }
+"False"|"True"  { yytext = yytext.substr(0,yyleng-0); return 'boolean'; }
 \'[^\']*\'			{ yytext = yytext.substr(0,yyleng-0); return 'caracter'; }
-[0-9]+("."[0-9]+)?\b  	return 'numero';
-([a-zA-Z])[a-zA-Z0-9_]* return 'identificador';
+\"[^\"]*\"			{ yytext = yytext.substr(0,yyleng-0); return 'cadena'; }
+([a-zA-Z])[a-zA-Z0-9_]*     return 'identificador';
 
 
 // Fin del archivo
 <<EOF>>     return 'EOF';
 
-
 // Errores lexicos
-.  return 'invalido'; //{
-  //const er = new error_1.Error({ tipo: 'lexico', linea: `${yylineno + 1}`, descripcion: `El valor "${yytext}" no es valido, columna: ${yylloc.first_column + 1}` });
-  //errores_1.Errores.getInstance().push(er);
-  //}
+.     {
+  controller.listaErrores.push(new errores.default('ERROR LEXICO',`El valor "${yytext}" no es valido`, yylineno + 1, yylloc.first_column + 1));
+}
+
 
 /lex
-
-
-// Importaciones 
-%{
-  const { NodoAST } = require('Errors/NodoAST');
-  const er = require('Errors/error');
-  const err = require('Errors/errores');
-%}
 
 
 // Precedence 
@@ -109,5 +118,57 @@
 
 %%
 
-INIT: INSTRUCCIONES EOF   {return $1;}
+INIT : INSTRUCCIONES EOF   {return $1;}
 ;
+
+INSTRUCCIONES : 
+              INSTRUCCIONES INTRUCCION  {$1.push($2); $$=$1}
+              | INSTRUCCION             {$$=[$1];}
+;
+
+INSTRUCCION :
+              DECLARACIONES     {$$=$1;}
+              | ASIGNACION      {$$=$1;}
+              | IMPRIMIR        {$$=$1;}
+              | error sb_pyc  {controller.listaErrores.push(new errores.default(`ERROR SINTACTICO`,`Se esperaba token ${yytext}`,@1.first_line,@1.first_column));}
+;
+
+EXPRESION :
+            entero            {$$= new nativo.default(new Tipo.default(Tipo.DataType.ENTERO),$1, @1.first_line, @1.first_column);}
+            | double          {$$= new nativo.default(new Tipo.default(Tipo.DataType.DECIMAL),$1, @1.first_line, @1.first_column);}
+            | boolean         {$$= new nativo.default(new Tipo.default(Tipo.DataType.LOGICO),$1, @1.first_line, @1.first_column);}
+            | caracter        {$$= new nativo.default(new Tipo.default(Tipo.DataType.CARACTER),$1, @1.first_line, @1.first_column);}
+            | cadena          {$$= new nativo.default(new Tipo.default(Tipo.DataType.CADENA),$1, @1.first_line, @1.first_column);}
+            | identificador   {$$= new nativo.default(new Tipo.default(Tipo.DataType.IDENTIFICADOR),$1, @1.first_line, @1.first_column);}
+;
+
+DECLARACIONES : 
+  DECLARACION1      {$$=$1;}
+  | DECLARACION2    {$$=$1;}
+;
+
+DECLARACION1:
+  TIPO EXPRESION sb_pyc       {$$= new declaracion.default($2, new Type.default(Type.DataType.CADENA), '', @1.first_line, @1.first_column);}
+;
+
+DECLARACION2:
+  TIPO EXPRESION sb_igual OPERACION sb_pyc  {$$= new declaracion.default($2, new Type.default(Type.DataType.CADENA), $4, @1.first_line, @1.first_column);}
+;
+
+TIPO :
+  pr_int          {$$=$1;}
+  | pr_string     {$$=$1;}
+  | pr_double     {$$=$1;}
+  | pr_boolean    {$$=$1;}
+  | pr_char       {$$=$1;}
+;
+
+
+
+
+
+//Print(variable1__);
+IMPRIMIR :
+          pr_print sb_parentesisL EXPRESION sb_parentesisR sb_pyc {$$=new impresion.default($3, @1.first_line, @1.first_column)}
+;
+

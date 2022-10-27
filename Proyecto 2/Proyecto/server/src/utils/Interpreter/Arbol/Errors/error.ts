@@ -1,15 +1,37 @@
-export class Error {
-    tipo: String = '';
-    linea: String = '';
-    descripcion: String = '';
-
-    constructor({tipo, linea, descripcion}: {tipo: String, linea: String, descripcion: String}){
-        const valor = linea;
-
-        /**
-         * El Object.assing(), copia todas las propiedades enumerables de uno
-         * o mas objetos fuente a un objeto destino. Devuelve el objeto destino
-         */
-        Object.assign(this, {tipo, linea: valor.toString(), descripcion})
-    }
+export default class Error {
+  private tipoError: String;
+  private desc: String;
+  private fila: number;
+  private columna: number;
+  public getDesc(): String {
+    return this.desc;
+  }
+  public getTipoError(): String {
+    return this.tipoError;
+  }
+  public getcolumna(): number {
+    return this.columna;
+  }
+  public getFila(): number {
+    return this.fila;
+  }
+  constructor(tipo: String, desc: String, fila: number, columna: number) {
+    this.tipoError = tipo;
+    this.desc = desc;
+    this.fila = fila;
+    this.columna = columna;
+  }
+  public returnError(): String {
+    return (
+      'Se obtuvo: ' +
+      this.tipoError +
+      ' desc:{' +
+      this.desc +
+      '} en la fila: ' +
+      this.fila +
+      ' en la columna: ' +
+      this.columna +
+      '\n'
+    );
+  }
 }

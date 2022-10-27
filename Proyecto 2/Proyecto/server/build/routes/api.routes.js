@@ -20,5 +20,5 @@ const router = express_1.default.Router();
  * y ya solo se extrae la propiedad que es el ping.
  */
 router.get('/ping', api_controller_1.default.ping);
-router.get('/parse', api_controller_1.default.parse);
+router.post('/parse', api_controller_1.default.parse);
 exports.default = router;
