@@ -1,149 +1,93 @@
-// Importaciones 
 %{
-  const controller = require('../../../controller/parser/parser');
-  const errores = require('./Errors/error');
-  const Tipo = require('./Symbol/Type');
-  const nativo = require('./Expresions/Native')
-  const impresion = require('./Instructions/Imprimir');
-  const declaracion = require('./Instructions/Declaracion')
-
+    //codigo js
+    const controller = require('../../../controller/parser/parser');
+    const errores = require('./Errors/Error');
+    const nativo = require('./Expresions/Native');
+    const aritmetico = require('./Expresions/Aritmetica');
+    const relacional = require('./Expresions/Relacional');
+    const logica = require('./Expresions/Logica');
+    const Tipo = require('./Symbol/Type');
+    const impresion = require('./Instructions/Imprimir');    
+    const declaracion = require('./Instructions/Declaracion')
 %}
+%lex 
 
 
-
-/**Definición lexica*/
-%lex
-
-%options case-insensitive
-
+%options case-insensitive 
+//inicio analisis lexico
 %%
+"int"        return 'RESINT';
+"print"      return 'RESPRINT';
 
-\s+                                     // espacios en blanco
-"//".*                                  // comentario simple
-[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]	    //comentario multilinea
+">"             return 'MAYOR_QUE';
+"<"             return 'MENOR_QUE';
 
-//'' return ''; <--------------
-// Palabras reservadas
-'int' return 'pr_int';
-'double' return 'pr_double';
-'boolean' return 'pr_boolean';
-'char' return 'pr_char';
-'string' return 'pr_string';
-'new' return 'pr_new';
-'if' return 'pr_if';
-'elif' return 'pr_elif';
-'else' return 'pr_else';
-'switch' return 'pr_switch';
-'case' return 'pr_case';
-'default' return 'pr_default';
-'while' return 'pr_while';
-'for' return 'pr_for';
-'do' return 'pr_do';
-'until' return 'pr_until';
-'break' return 'pr_break';
-'continue' return 'pr_continue';
-'return' return 'pr_return';
-'void' return 'pr_void';
-'print' return 'pr_print';
-'println' return 'pr_println';
+"||"            return 'OR';
+"="             return 'IGUAL';
+"+"             return 'MAS';
+";"             return 'PTCOMA';
+"("             return 'PARABRE';
+")"             return 'PARCIERRA';
 
 
-// Signos
-'=' return 'sb_igual';
-'+' return 'sb_suma';
-'-' return 'sb_resta';
-'*' return 'sb_multiplicacion';
-'/' return 'sb_division';
-'^' return 'sb_potencia';
-'%' return 'sb_modulo';
-'>' return 'sb_mayor';
-'<' return 'sb_menor';
-'>=' return 'sb_mayorI';
-'<=' return 'sb_menorI';
-'==' return 'sb_igualQ';
-'!=' return 'sb_diferente';
-'?' return 'sb_ternario';
-'||' return 'sb_or';
-'&&' return 'sb_and';
-'!' return 'sb_not';
-'(' return 'sb_parentesisL';
-')' return 'sb_parentesisR';
-':' return 'sb_dosPuntos';
-';' return 'sb_pyc';
-'{' return 'sb_llaveL';
-'}' return 'sb_llaveR';
-'++' return 'sb_incremento';
-'--' return 'sb_decremento';
-'[' return 'sb_corcheteL';
-']' return 'sb_corcheteR';
+[ \r\t]+ { }
+\n {}
+\"[^\"]*\"                  { yytext=yytext.substr(1,yyleng-2); return 'CADENA'; }
+[0-9]+                      return 'ENTERO';
+[A-Za-z]+["_"0-9A-Za-z]*    return 'IDENTIFICADOR';
 
-
-// Patrones (Expresiones regulares [ER])
-[ \r\t]+ { } //Espacios, tabulaciones, carritos..
-\n {}        // Saltos de linea
-[0-9]+          return 'entero';
-^\d*\.\d+$      return 'double';
-"False"|"True"  return 'boolean';
-\'[^\']*\'			{ yytext = yytext.substr(0,yyleng-0); return 'caracter'; }
-\"[^\"]*\"			{ yytext = yytext.substr(0,yyleng-0); return 'cadena'; }
-([a-zA-Z])[a-zA-Z0-9_]*     return 'identificador';
-
-
-// Fin del archivo
-<<EOF>>     return 'EOF';
-
-// Errores lexicos
-.     {
-  controller.listaErrores.push(new errores.default('ERROR LEXICO',`El valor "${yytext}" no es valido`, yylineno + 1, yylloc.first_column + 1));
-}
-
+<<EOF>>                     return 'EOF';
+.                           {controller.listaErrores.push(new errores.default('ERROR LEXICO',`El valor "${yytext}" no es valido`, yylineno + 1, yylloc.first_column + 1));}
 
 /lex
 
-
-// Precedence 
-%left 'sb_ternario'
-%left 'sb_or'
-%left 'sb_and'
-%left 'sb_not'
-%left 'sb_igualQ' 'sb_diferente'
-%left 'sb_mayor' 'sb_menor' 'sb_mayorI' 'sb_menorI'
-%left 'sb_mas' 'sb_menos'
-%left 'sb_multiplicacion' 'sb_division' 'sb_modulo'
-%left 'umenos'
-%right 'sb_potencia'
-%left 'sb_incremento' 'sb_decremento'
+%left 'MAS'
+%left 'MAYOR_QUE'
 
 %start INIT
-
+//Inicio
+//Definicion de gramatica
 %%
 
-INIT : INSTRUCCIONES EOF   {return $1;}
+INIT: INSTRUCCIONES EOF     {return $1;}
 ;
 
 INSTRUCCIONES : 
-  INSTRUCCIONES INTRUCCION  {$1.push($2); $$=$1}
-  | INSTRUCCION             {$$=[$1];}
+    INSTRUCCIONES INSTRUCCION   {$1.push($2); $$=$1;}
+    | INSTRUCCION               {$$=[$1];}
 ;
 
 INSTRUCCION :
-  DECLARACION       {$$=$1;}
-  | IMPRIMIR        {$$=$1;}
-  | error    {controller.listaErrores.push(new errores.default(`ERROR SINTACTICO`,`No se esperaba token ${$2}`,@1.first_line,@1.first_column));}
+    IMPRIMIR                {$$=$1;}
+    | DECLARACION           {$$=$1;}
+    | error  PTCOMA         {controller.listaErrores.push(new errores.default(`ERROR SINTACTICO`,"Se esperaba token",@1.first_line,@1.first_column));}
 ;
 
-EXPRESION :
-  entero            {$$= new nativo.default(new Tipo.default(Tipo.DataType.ENTERO),$1, @1.first_line, @1.first_column);}
-  | cadena          {$$= new nativo.default(new Tipo.default(Tipo.DataType.CADENA),$1, @1.first_line, @1.first_column);}
+DECLARACION:
+    RESINT IDENTIFICADOR IGUAL EXPRESION PTCOMA {$$=new declaracion.default($2, new Tipo.default(Tipo.DataType.ENTERO), $4, @1.first_line, @1.first_column);}
 ;
 
-
-DECLARACION :
-  pr_int identificador sb_igual EXPRESION sb_pyc   {$$= new declaracion.default($2, new Tipo.default(Tipo.DataType.ENTERO), $4, @1.first_line, @1.first_column);}
+IMPRIMIBLE:
+    EXPRESION {$$=$1;}  
+    | EXPRESION_RELACIONAL {$$=$1;}  
+    | EXPRESION_LOGICA {$$=$1;}  
 ;
 
-//Print(variable1__);
-IMPRIMIR :
-  pr_print sb_parentesisL EXPRESION sb_parentesisR sb_pyc   {$$=new impresion.default($3, @1.first_line, @1.first_column)}
+IMPRIMIR : 
+    RESPRINT PARABRE IMPRIMIBLE PARCIERRA PTCOMA {$$=new impresion.default($3,@1.first_line,@1.first_column);}
 ;
 
+EXPRESION : 
+    EXPRESION MAS EXPRESION {$$ = new aritmetico.default(aritmetico.tipoOp.SUMA, $1, $3, @1.first_line, @1.first_column);}
+    | IDENTIFICADOR {$$ = new nativo.default(new Tipo.default(Tipo.DataType.IDENTIFICADOR), $1, @1.first_line, @1.first_column);}
+    | ENTERO {$$= new nativo.default(new Tipo.default(Tipo.DataType.ENTERO),$1, @1.first_line, @1.first_column);}
+    | CADENA {$$= new nativo.default(new Tipo.default(Tipo.DataType.CADENA),$1, @1.first_line, @1.first_column);}
+;
+
+EXPRESION_RELACIONAL :
+    EXPRESION MAYOR_QUE EXPRESION {$$ = new relacional.default(relacional.tipoOp.MAYOR, $1, $3, @1.first_line, @1.first_column);}
+;
+
+EXPRESION_LOGICA :
+    EXPRESION_RELACIONAL OR EXPRESION_RELACIONAL {$$ = new logica.default(logica.tipoOp.OR, $1, $3, @1.first_line, @1.first_column);}
+;

@@ -1,5 +1,4 @@
 import { Instruccion } from "../Abstract/Instruccion";
-import Operacion from '../Expresions/Native'
 import Three from "../Symbol/Three";
 import Symbol from "../Symbol/Symbol";
 import SymbolTable from "../Symbol/SymbolTable";
@@ -8,9 +7,9 @@ import Type, { DataType } from "../Symbol/Type";
 export default class Declaracion extends Instruccion{
     private id: String;
     private tipo: Type;
-    private valor: Operacion;
+    private valor: Instruccion;
 
-    constructor(id: String, tipo: Type, valor: Operacion, linea: number, columna: number){
+    constructor(id: String, tipo: Type, valor: Instruccion, linea: number, columna: number){
         super(new Type(DataType.INDEFINIDO), linea, columna);
         this.id = id;
         this.tipo = tipo;

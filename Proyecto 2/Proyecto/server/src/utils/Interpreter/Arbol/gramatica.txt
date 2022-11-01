@@ -50,27 +50,140 @@ IMPRIMIR :
 
 
 ====================================================================
+// Importaciones 
+%{
+  const controller = require('../../../controller/parser/parser');
+  const errores = require('./Errors/error');
+  const Tipo = require('./Symbol/Type');
+  const nativo = require('./Expresions/Native');
+  const aritmetico = require('./Expresions/Aritmetica');
+  const impresion = require('./Instructions/Imprimir');
+  const declaracion = require('./Instructions/Declaracion');
 
-INIT: INSTRUCCIONES
+%}
+
+
+
+/**Definición lexica*/
+%lex
+
+%options case-insensitive
+
+%%
+
+\s+                                     // espacios en blanco
+"//".*                                  // comentario simple
+[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]	    //comentario multilinea
+
+//'' return ''; <--------------
+// Palabras reservadas
+'int' return 'pr_int'; //
+'double' return 'pr_double'; //
+'boolean' return 'pr_boolean'; //
+'char' return 'pr_char'; //
+'string' return 'pr_string'; //
+'new' return 'pr_new';
+'if' return 'pr_if';
+'elif' return 'pr_elif';
+'else' return 'pr_else';
+'switch' return 'pr_switch';
+'case' return 'pr_case';
+'default' return 'pr_default';
+'while' return 'pr_while';
+'for' return 'pr_for';
+'do' return 'pr_do';
+'until' return 'pr_until';
+'break' return 'pr_break';
+'continue' return 'pr_continue';
+'return' return 'pr_return';
+'void' return 'pr_void';
+'print' return 'pr_print';
+'println' return 'pr_println';
+
+
+// Signos
+'=' return 'sb_igual'; //
+'+' return 'sb_suma'; //
+'-' return 'sb_resta'; //
+'*' return 'sb_multiplicacion'; //
+'/' return 'sb_division'; //
+'^' return 'sb_potencia'; //
+'%' return 'sb_modulo'; //
+'>' return 'sb_mayor'; //
+'<' return 'sb_menor'; //
+'>=' return 'sb_mayorI'; //
+'<=' return 'sb_menorI'; //
+'==' return 'sb_igualQ';
+'!=' return 'sb_diferente';
+'?' return 'sb_ternario';
+'||' return 'sb_or';
+'&&' return 'sb_and';
+'!' return 'sb_not';
+'(' return 'sb_parentesisL';
+')' return 'sb_parentesisR';
+':' return 'sb_dosPuntos';
+';' return 'sb_pyc';
+'{' return 'sb_llaveL';
+'}' return 'sb_llaveR';
+'++' return 'sb_incremento';
+'--' return 'sb_decremento';
+'[' return 'sb_corcheteL';
+']' return 'sb_corcheteR';
+
+
+// Patrones (Expresiones regulares [ER])
+[ \r\t]+ { } //Espacios, tabulaciones, carritos..
+\n {}        // Saltos de linea
+[0-9]+          return 'entero';
+^\d*\.\d+$      return 'double';
+"False"|"True"  return 'boolean';
+\'[^\']*\'			{ yytext = yytext.substr(0,yyleng-0); return 'caracter'; }
+\"[^\"]*\"			{ yytext = yytext.substr(0,yyleng-0); return 'cadena'; }
+([a-zA-Z])[a-zA-Z0-9_]*     return 'identificador';
+
+
+// Fin del archivo
+<<EOF>>     return 'EOF';
+
+// Errores lexicos
+.     {
+  controller.listaErrores.push(new errores.default('ERROR LEXICO',`El valor "${yytext}" no es valido`, yylineno + 1, yylloc.first_column + 1));
+}
+
+
+/lex
+
+
+// Precedence 
+
+%left 'sb_suma'
+
+%start INIT
+
+%%
+
+INIT : INSTRUCCIONES EOF   {return $1;}
 ;
 
-INSTRUCCIONES :
-  INSTRUCCIONES INTRUCCION
-  | INSTRUCCION
+INSTRUCCIONES : 
+  INSTRUCCIONES INSTRUCCION  {$1.push($2); $$=$1}
+  | INSTRUCCION              {$$=[$1];}
 ;
 
-INSTRUCCION:
-  DECLARACION
-  | ASIGNACION
-  | error sb_pyc      {controller.listaErrores.push(new errores.default(`ERROR SINTACTICO`,`Se esperaba token ${$2}`,@1.first_line,@1.first_column));}
+INSTRUCCION :
+  DECLARACION       {$$=$1;} 
+  | IMPRIMIR        {$$=$1;}
+  | error sb_pyc    {controller.listaErrores.push(new errores.default(`ERROR SINTACTICO`,`Se esperaba token ${$2} `,@1.first_line,@1.first_column));}
 ;
 
-DECLARACION:
-  TIPO identificador sb_pyc
+
+//Print(variable1__);
+IMPRIMIR :
+  pr_print sb_parentesisL EXPRESION sb_parentesisR sb_pyc   {$$=new impresion.default($3, @1.first_line, @1.first_column)}
 ;
 
-ASIGNACION:
-  TIPO identificador sb_igual EXPRESION sb_pyc
+DECLARACION :
+  TIPO identificador sb_igual EXPRESION sb_pyc   {$$= new declaracion.default($2, new Tipo.default(Tipo.DataType.ENTERO), $4, @1.first_line, @1.first_column);}
 ;
 
 TIPO :
@@ -81,32 +194,137 @@ TIPO :
   | pr_char
 ;
 
+
 EXPRESION :
-  // Operaciones aritmeticas
-  sb_menos EXPRESION %prec umenos
-  | EXPRESION sb_mas EXPRESION
-  | EXPRESION sb_menos EXPRESION
-  | EXPRESION sb_multiplicacion EXPRESION
-  | EXPRESION sb_division EXPRESION
-  | EXPRESION sb_modulo EXPRESION
-  | EXPRESION sb_potencia EXPRESION
-  | identificador sb_incremento
-  | identificador sb_decremento
-  | sb_parentesisL EXPRESION sb_parentesisR
-  // Operaciones de comparacion
-  | EXPRESION sb_mayor EXPRESION
-  | EXPRESION sb_menor EXPRESION
-  | EXPRESION sb_mayorI EXPRESION
-  | EXPRESION sb_menorI EXPRESION
-  | EXPRESION sb_igualQ EXPRESION
-  | EXPRESION sb_diferente EXPRESION
-  // Operaciones logicos
-  | EXPRESION sb_and EXPRESION
-  | EXPRESION sb_or EXPRESION
-  | sb_not EXPRESION
-  | entero
-  | double
-  | boolean
-  | caracter
-  | cadena
+  EXPRESION sb_mas EXPRESION    {$$ = new aritmetico.default(aritmetico.tipoOp.SUMA, $1, $3, @1.first_line, @1.first_column);}
+  | entero          {$$= new nativo.default(new Tipo.default(Tipo.DataType.ENTERO),$1, @1.first_line, @1.first_column);}
+  | double          {$$= new nativo.default(new Tipo.default(Tipo.DataType.DECIMAL),$1, @1.first_line, @1.first_column);}
+  | boolean         {$$= new nativo.default(new Tipo.default(Tipo.DataType.LOGICO),$1, @1.first_line, @1.first_column);}
+  | caracter        {$$= new nativo.default(new Tipo.default(Tipo.DataType.CARACTER),$1, @1.first_line, @1.first_column);}
+  | cadena          {$$= new nativo.default(new Tipo.default(Tipo.DataType.CADENA),$1, @1.first_line, @1.first_column);}
+  | identificador   {$$= new nativo.default(new Tipo.default(Tipo.DataType.IDENTIFICADOR),$1, @1.first_line, @1.first_column);}
 ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'' return 'PR_INGRESAR';
+'' return 'PR_COMO';
+'' return 'PR_CON_VALOR';
+'' return 'PR_ASIGNACION';
+'' return 'PR_SI';
+'' return 'PR_ENTONCES';
+'' return 'PR_DE_LO_CONTRARIO';
+'' return 'PR_O_SI';
+'' return 'PR_FIN_SI';
+'' return 'PR_SEGUN';
+'' return 'PR_HACER';
+'' return 'PR_FIN_SEGUN';
+'' return 'PR_PARA';
+'' return 'PR_HASTA';
+'' return 'PR_CON';
+'' return 'PR_INCREMENTAL';
+'' return 'PR_FIN_PARA';
+'' return 'PR_MIENTRAS';
+'' return 'PR_FIN_MIENTRAS';
+'' return 'PR_REPETIR';
+'' return 'PR_HASTA_QUE';
+'' return 'PR_RETORNAR';
+'' return 'PR_EJECUTAR';
+'' return 'PR_IMPRIMIR';
+'' return 'PR_IMPRIMIR_NL';
+'' return 'PR_METODO';
+'' return 'PR_CON_PARAMETROS';
+'' return 'PR_FIN_METODO';
+'' return 'PR_FUNCION';
+'' return 'PR_FIN_FUNCION';
+
+'int' return 'PR_NUMERO';
+'double' return 'PR_DECIMAL';
+'string' return 'PR_CADENA';
+'boolean' return 'PR_BOOLEAN';
+'char' return 'PR_CARACTER';
+
+'&&' return 'OP_AND';
+'||' return 'OP_OR';
+'!' return 'OP_NOT';
+'+' return 'OP_SUMA';
+'-' return 'OP_RESTA';
+'*' return 'OP_MULTIPLICACION';
+'/' return 'OP_DIVISION';
+'^' return 'OP_POTENCIA';
+'%' return 'OP_MODULO';
+'>' return 'OP_MAYOR_QUE';
+'<' return 'OP_MENOR_QUE';
+'=' return 'OP_IGUAL';
+'==' return 'OP_IGUAL_IGUAL';
+'!=' return 'OP_ES_DIFERENTE';
+'>=' return 'OP_MAYOR_IGUAL';
+'<=' return 'OP_MENOR_IGUAL';
+'[' return 'SB_CORCHETE_LEFT';
+']' return 'SB_CORCHETE_RIGHT';
+'(' return 'SB_PARENTESIS_LEFT';
+')' return 'SB_PARENTESIS_RIGHT';
+';' return 'SB_PUNTO_Y_COMA';
+',' return 'SB_COMA';
+'¿' return 'SB_INTERROGACION_LEFT';
+'?' return 'SB_INTERROGACION_RIGHT';
+'++' return 'SB_INCREMENTO';
+'--' return 'SB_DECREMENTO';
+
+
+
+'' return 'COMENTARIO1';
+'' return 'COMENTARIO2';
+'' return 'CARACTER';
+'' return 'BOOLEAN';
+'' return 'IDENTIFICADOR';
+'' return 'CARACTER_E';
+'' return 'CADENA';
+'' return 'DIGITOS';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+pr_inicio, pr_fin, pr_ingresar, pr_como, pr_con_valor, pr_asignacion, pr_si;
+pr_entonces, pr_de_lo_contrario, pr_o_si, pr_fin_si, pr_segun, pr_hacer;
+pr_fin_segun, pr_para, pr_hasta, pr_con, pr_incremental, pr_fin_para;
+pr_mientras, pr_fin_mientras, pr_repetir, pr_hasta_que, pr_retornar;
+pr_ejecutar, pr_imprimir, pr_imprimir_nl, pr_metodo, pr_con_parametros;
+pr_fin_metodo, pr_funcion, pr_fin_funcion, pr_numero, pr_cadena, pr_boolean;
+pr_caracter, op_and, op_or, op_not, op_suma, op_resta, op_multiplicacion, op_division;
+op_potencia, op_modulo, op_mayor_que, op_menor_que, op_igual, op_es_diferente;
+op_mayor_igual, op_menor_igual, sb_corchete_left, sb_corchete_right, sb_parentesis_left, sb_parentesis_right;
+sb_punto_y_coma, sb_coma, yycolumn, sb_interrogacion_left, sb_interrogacion_right;
+comentario1, comentario2, caracter, boolean, identificador, caracter_e, cadena, digitos;

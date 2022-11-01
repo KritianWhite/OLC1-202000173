@@ -64,6 +64,7 @@ const parse = (req, res) => {
                 exports.listaErrores.push(i);
                 ast.actualizaConsola(i.returnError());
             }
+            console.log(i);
             var resultador = i instanceof Instruccion_1.Instruccion ? i.interpretar(ast, tabla) : new error_1.default("ERROR SEMANTICO", "no se puede ejecutar la instruccion", 0, 0);
             if (resultador instanceof error_1.default) {
                 exports.listaErrores.push(resultador);
