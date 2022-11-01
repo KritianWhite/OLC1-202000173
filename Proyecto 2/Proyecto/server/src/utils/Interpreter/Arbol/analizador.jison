@@ -81,9 +81,9 @@
 // Patrones (Expresiones regulares [ER])
 [ \r\t]+ { } //Espacios, tabulaciones, carritos..
 \n {}        // Saltos de linea
-^\d+$           { yytext = yytext.substr(0,yyleng-0); return 'entero'; }
-^\d*\.\d+$      { yytext = yytext.substr(0,yyleng-0); return 'double'; }
-"False"|"True"  { yytext = yytext.substr(0,yyleng-0); return 'boolean'; }
+[0-9]+          return 'entero';
+^\d*\.\d+$      return 'double';
+"False"|"True"  return 'boolean';
 \'[^\']*\'			{ yytext = yytext.substr(0,yyleng-0); return 'caracter'; }
 \"[^\"]*\"			{ yytext = yytext.substr(0,yyleng-0); return 'cadena'; }
 ([a-zA-Z])[a-zA-Z0-9_]*     return 'identificador';
@@ -122,53 +122,28 @@ INIT : INSTRUCCIONES EOF   {return $1;}
 ;
 
 INSTRUCCIONES : 
-              INSTRUCCIONES INTRUCCION  {$1.push($2); $$=$1}
-              | INSTRUCCION             {$$=[$1];}
+  INSTRUCCIONES INTRUCCION  {$1.push($2); $$=$1}
+  | INSTRUCCION             {$$=[$1];}
 ;
 
 INSTRUCCION :
-              DECLARACIONES     {$$=$1;}
-              | ASIGNACION      {$$=$1;}
-              | IMPRIMIR        {$$=$1;}
-              | error sb_pyc  {controller.listaErrores.push(new errores.default(`ERROR SINTACTICO`,`Se esperaba token ${yytext}`,@1.first_line,@1.first_column));}
+  DECLARACION       {$$=$1;}
+  | IMPRIMIR        {$$=$1;}
+  | error    {controller.listaErrores.push(new errores.default(`ERROR SINTACTICO`,`No se esperaba token ${$2}`,@1.first_line,@1.first_column));}
 ;
 
 EXPRESION :
-            entero            {$$= new nativo.default(new Tipo.default(Tipo.DataType.ENTERO),$1, @1.first_line, @1.first_column);}
-            | double          {$$= new nativo.default(new Tipo.default(Tipo.DataType.DECIMAL),$1, @1.first_line, @1.first_column);}
-            | boolean         {$$= new nativo.default(new Tipo.default(Tipo.DataType.LOGICO),$1, @1.first_line, @1.first_column);}
-            | caracter        {$$= new nativo.default(new Tipo.default(Tipo.DataType.CARACTER),$1, @1.first_line, @1.first_column);}
-            | cadena          {$$= new nativo.default(new Tipo.default(Tipo.DataType.CADENA),$1, @1.first_line, @1.first_column);}
-            | identificador   {$$= new nativo.default(new Tipo.default(Tipo.DataType.IDENTIFICADOR),$1, @1.first_line, @1.first_column);}
-;
-
-DECLARACIONES : 
-  DECLARACION1      {$$=$1;}
-  | DECLARACION2    {$$=$1;}
-;
-
-DECLARACION1:
-  TIPO EXPRESION sb_pyc       {$$= new declaracion.default($2, new Type.default(Type.DataType.CADENA), '', @1.first_line, @1.first_column);}
-;
-
-DECLARACION2:
-  TIPO EXPRESION sb_igual OPERACION sb_pyc  {$$= new declaracion.default($2, new Type.default(Type.DataType.CADENA), $4, @1.first_line, @1.first_column);}
-;
-
-TIPO :
-  pr_int          {$$=$1;}
-  | pr_string     {$$=$1;}
-  | pr_double     {$$=$1;}
-  | pr_boolean    {$$=$1;}
-  | pr_char       {$$=$1;}
+  entero            {$$= new nativo.default(new Tipo.default(Tipo.DataType.ENTERO),$1, @1.first_line, @1.first_column);}
+  | cadena          {$$= new nativo.default(new Tipo.default(Tipo.DataType.CADENA),$1, @1.first_line, @1.first_column);}
 ;
 
 
-
-
+DECLARACION :
+  pr_int identificador sb_igual EXPRESION sb_pyc   {$$= new declaracion.default($2, new Tipo.default(Tipo.DataType.ENTERO), $4, @1.first_line, @1.first_column);}
+;
 
 //Print(variable1__);
 IMPRIMIR :
-          pr_print sb_parentesisL EXPRESION sb_parentesisR sb_pyc {$$=new impresion.default($3, @1.first_line, @1.first_column)}
+  pr_print sb_parentesisL EXPRESION sb_parentesisR sb_pyc   {$$=new impresion.default($3, @1.first_line, @1.first_column)}
 ;
 

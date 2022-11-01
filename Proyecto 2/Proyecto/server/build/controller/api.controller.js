@@ -25,6 +25,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const health = __importStar(require("./health/ping"));
 const parser = __importStar(require("./parser/parser"));
+const parser2 = __importStar(require("./parser/parser2"));
 /**
  * ...health: se llama express operator, lo que hace
  * es de que si en ping contenemos 50 endpoint lo
@@ -32,4 +33,4 @@ const parser = __importStar(require("./parser/parser"));
  * tengo que venir aqui a enumerar cada endpoint sino
  * que él mismo lo hace.
  */
-exports.default = Object.assign(Object.assign({}, health), parser);
+exports.default = Object.assign(Object.assign(Object.assign({}, health), parser), parser2);

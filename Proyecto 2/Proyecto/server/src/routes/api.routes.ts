@@ -20,5 +20,6 @@ const router = express.Router();
  */
 router.get('/ping', controller.ping)
 router.post('/parse', controller.parse)
+//router.post('/parse2', controller.parse2)
 
 export default router;

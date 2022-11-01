@@ -21,4 +21,5 @@ const router = express_1.default.Router();
  */
 router.get('/ping', api_controller_1.default.ping);
 router.post('/parse', api_controller_1.default.parse);
+//router.post('/parse2', controller.parse2)
 exports.default = router;

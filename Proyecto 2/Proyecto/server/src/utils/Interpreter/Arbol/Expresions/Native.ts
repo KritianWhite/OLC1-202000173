@@ -26,8 +26,8 @@ export default class Nativo extends Instruccion {
             return this.valor.toString();
         }else if (this.tipoDato.getTipo() === DataType.IDENTIFICADOR){
             let value = tabla.getValor(this.valor);
-            this.tipoDato = get(value, 'tipo', new Type(DataType.INDEFINIDO))
-            return get(value, 'valor')
+            this.tipoDato = get(value, 'tipo', new Type(DataType.INDEFINIDO));
+            return get(value, 'valor');
         }
 
     }

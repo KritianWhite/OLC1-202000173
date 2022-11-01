@@ -1,0 +1,16 @@
+.App {
+  background-color: #637eb3;
+  text-align: left;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(8px + 1vmin);
+  color: white;
+}
+
+.btn-hola{
+  margin-top: 10px;
+  width: 100%;
+}

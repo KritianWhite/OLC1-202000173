@@ -1,5 +1,6 @@
 import * as health from './health/ping'
 import * as parser from './parser/parser'
+import * as parser2 from './parser/parser2'
 
 
 /**
@@ -11,5 +12,6 @@ import * as parser from './parser/parser'
  */
 export default {
     ...health,
-    ...parser
+    ...parser,
+    ...parser2
 }

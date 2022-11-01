@@ -1,0 +1,112 @@
+INIT : INSTRUCCIONES EOF   //{return $1;}
+;
+
+INSTRUCCIONES : 
+              INSTRUCCIONES INTRUCCION  //{$1.push($2); $$=$1}
+              | INSTRUCCION             //{$$=[$1];}
+;
+
+INSTRUCCION :
+              DECLARACIONES     //{$$=$1;}
+              | ASIGNACION      //{$$=$1;}
+              | IMPRIMIR        //{$$=$1;}
+              | error  {controller.listaErrores.push(new errores.default(`ERROR SINTACTICO`,`Se esperaba token ${yytext}`,@1.first_line,@1.first_column));}
+;
+
+EXPRESION :
+            entero            //{$$= new nativo.default(new Tipo.default(Tipo.DataType.ENTERO),$1, @1.first_line, @1.first_column);}
+            | double          //{$$= new nativo.default(new Tipo.default(Tipo.DataType.DECIMAL),$1, @1.first_line, @1.first_column);}
+            | boolean         //{$$= new nativo.default(new Tipo.default(Tipo.DataType.LOGICO),$1, @1.first_line, @1.first_column);}
+            | caracter        //{$$= new nativo.default(new Tipo.default(Tipo.DataType.CARACTER),$1, @1.first_line, @1.first_column);}
+            | cadena          //{$$= new nativo.default(new Tipo.default(Tipo.DataType.CADENA),$1, @1.first_line, @1.first_column);}
+            | identificador   //{$$= new nativo.default(new Tipo.default(Tipo.DataType.IDENTIFICADOR),$1, @1.first_line, @1.first_column);}
+;
+
+DECLARACIONES : 
+  DECLARACION1      {$$=$1;}
+  | DECLARACION2    {$$=$1;}
+;
+
+DECLARACION1:
+  TIPO identificador sb_pyc       //{$$= new declaracion.default($2, new Type.default(Type.DataType.CADENA), '', @1.first_line, @1.first_column);}
+;
+
+DECLARACION2:
+  TIPO identificador sb_igual OPERACION sb_pyc  //{$$= new declaracion.default($2, new Type.default(Type.DataType.IDENTIFICADOR), $4, @1.first_line, @1.first_column);}
+;
+
+TIPO :
+  pr_int          {$$=$1;}
+  | pr_string     {$$=$1;}
+  | pr_double     {$$=$1;}
+  | pr_boolean    {$$=$1;}
+  | pr_char       {$$=$1;}
+;
+
+//Print(variable1__);
+IMPRIMIR :
+          pr_print sb_parentesisL EXPRESION sb_parentesisR sb_pyc   //{$$=new impresion.default($3, @1.first_line, @1.first_column)}
+;
+
+
+====================================================================
+
+INIT: INSTRUCCIONES
+;
+
+INSTRUCCIONES :
+  INSTRUCCIONES INTRUCCION
+  | INSTRUCCION
+;
+
+INSTRUCCION:
+  DECLARACION
+  | ASIGNACION
+  | error sb_pyc      {controller.listaErrores.push(new errores.default(`ERROR SINTACTICO`,`Se esperaba token ${$2}`,@1.first_line,@1.first_column));}
+;
+
+DECLARACION:
+  TIPO identificador sb_pyc
+;
+
+ASIGNACION:
+  TIPO identificador sb_igual EXPRESION sb_pyc
+;
+
+TIPO :
+  pr_int
+  | pr_string
+  | pr_boolean
+  | pr_double
+  | pr_char
+;
+
+EXPRESION :
+  // Operaciones aritmeticas
+  sb_menos EXPRESION %prec umenos
+  | EXPRESION sb_mas EXPRESION
+  | EXPRESION sb_menos EXPRESION
+  | EXPRESION sb_multiplicacion EXPRESION
+  | EXPRESION sb_division EXPRESION
+  | EXPRESION sb_modulo EXPRESION
+  | EXPRESION sb_potencia EXPRESION
+  | identificador sb_incremento
+  | identificador sb_decremento
+  | sb_parentesisL EXPRESION sb_parentesisR
+  // Operaciones de comparacion
+  | EXPRESION sb_mayor EXPRESION
+  | EXPRESION sb_menor EXPRESION
+  | EXPRESION sb_mayorI EXPRESION
+  | EXPRESION sb_menorI EXPRESION
+  | EXPRESION sb_igualQ EXPRESION
+  | EXPRESION sb_diferente EXPRESION
+  // Operaciones logicos
+  | EXPRESION sb_and EXPRESION
+  | EXPRESION sb_or EXPRESION
+  | sb_not EXPRESION
+  | entero
+  | double
+  | boolean
+  | caracter
+  | cadena
+;
