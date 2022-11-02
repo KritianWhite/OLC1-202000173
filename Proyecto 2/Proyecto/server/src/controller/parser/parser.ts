@@ -56,7 +56,7 @@ export const parse = (req: Request & unknown, res: Response): void => {
     listaErrores = new Array<Errores>();
     let parser = require('../../utils/Interpreter/Arbol/analizador');
     const { peticion } = req.body;
-
+ 
     try {
         let ast = new Three(parser.parse(peticion.toString()));
         var tabla = new SymbolTable();

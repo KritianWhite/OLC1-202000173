@@ -17,7 +17,7 @@ export default class Nativo extends Instruccion {
         if(this.tipoDato.getTipo() === DataType.ENTERO){
             return this.valor
         }else if (this.tipoDato.getTipo() === DataType.DECIMAL) {
-            return this.valor.toString();
+            return parseFloat(this.valor.toString());
         }else if (this.tipoDato.getTipo() === DataType.LOGICO) {
             return this.valor.toString();
         }else if (this.tipoDato.getTipo() === DataType.CARACTER) {

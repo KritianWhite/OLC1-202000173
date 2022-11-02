@@ -1,0 +1,7 @@
+	if(6>5 || 4>5){
+       		print("estoy adentro del if");
+	       	print(variable1);
+	}elif(5>4 || 4>5){
+	      print("Estoy adentro del elif");
+	      print(variable2);
+	}
