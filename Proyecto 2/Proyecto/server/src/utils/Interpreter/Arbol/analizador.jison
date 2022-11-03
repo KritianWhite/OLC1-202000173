@@ -11,7 +11,6 @@
     const declaracion = require('./Instructions/Declaracion')
     const asignacion = require('./Instructions/Asignacion')
     const ifIns = require('./Instructions/IfIns')
-    const comentario = require('./Instructions/Comentario')
 %}
 %lex 
 
@@ -36,9 +35,7 @@
 "while"         return 'pr_while';
 "print"         return 'pr_print';
 
-">"             return 'mayor_que';
-"<"             return 'menor_que';
-
+// OPERADORES ARITMETICOS
 "+"             return 'mas';
 "-"             return 'menos';
 "*"             return 'multiplicacion';
@@ -46,8 +43,20 @@
 "%"             return 'modulo';
 "^"             return 'potencia';
 
+// OPERADORES RELACIONALES
+">="             return 'mayor_igual';
+">"             return 'mayor_que';
+"<="             return 'menor_igual';
+"<"             return 'menor_que';
+"!="             return 'diferente';
 
+
+// OPERADORES LOGICOS
 "||"            return 'or';
+"&&"            return 'and';
+"!"             return 'not';
+
+"=="            return 'igual_igual';
 "="             return 'igual';
 ";"             return 'pyc';
 ","             return 'coma';
@@ -72,12 +81,14 @@
 }
 
 /lex
-
 %left 'or'
-%left 'mayor_que' 'menor_que'
+%left 'and'
+%right 'not'
+%left 'mayor_que' 'menor_que' 'mayor_igual' 'menor_igual' 'diferente'
 %left 'mas' 'menos'
-%left 'multiplicacion' 'division' 'modulo'
-%right 'potencia'
+%left 'multiplicacion' 'division'
+%left 'potencia'
+%right 'modulo'
 
 %start INIT
 //Inicio
@@ -112,13 +123,13 @@ ASIGNACION:
 
 // Sentencia if, elif, else
 IF:
-    pr_if parentesisL EXPRESION_LOGICA parentesisR LlaveL INSTRUCCIONES LlaveR
+    pr_if parentesisL EXPRESION parentesisR LlaveL INSTRUCCIONES LlaveR
                 {$$=new ifIns.default($3,$6, undefined,undefined,@1.first_line,@1.first_column);}
     | ELIF      {$$=$1;}
 ;
 
 ELIF:
-    pr_elif parentesisL EXPRESION_LOGICA parentesisR LlaveL INSTRUCCIONES LlaveR
+    pr_elif parentesisL EXPRESION parentesisR LlaveL INSTRUCCIONES LlaveR
                 {$$=new ifIns.default($3,$6, undefined,undefined,@1.first_line,@1.first_column);}
     | ELSE      {$$=$1;}
 ;
@@ -140,13 +151,8 @@ TIPO :
   | pr_char
 ;
 
-IMPRIMIBLE:
-    EXPRESION {$$=$1;}  
-    | EXPRESION_LOGICA {$$=$1;}  
-;
-
 IMPRIMIR : 
-    pr_print parentesisL IMPRIMIBLE parentesisR pyc {$$=new impresion.default($3,@1.first_line,@1.first_column);}
+    pr_print parentesisL EXPRESION parentesisR pyc {$$=new impresion.default($3,@1.first_line,@1.first_column);}
 ;
 
 LISTA_VARIABLE : 
@@ -161,21 +167,28 @@ EXPRESION :
     | EXPRESION division EXPRESION              {$$ = new aritmetico.default(aritmetico.tipoOp.DIVISION, $1, $3, @1.first_line, @1.first_column);}
     | EXPRESION modulo EXPRESION                {$$ = new aritmetico.default(aritmetico.tipoOp.MODULO, $1, $3, @1.first_line, @1.first_column);}
     | EXPRESION potencia EXPRESION              {$$ = new aritmetico.default(aritmetico.tipoOp.POTENCIA, $1, $3, @1.first_line, @1.first_column);}
-    | parentesisL EXPRESION parentesisR         {$$=$2;}
-    | DATO      {$$=$1;}
+    | EXPRESION_RELACIONAL                      {$$=$1;}
+    | EXPRESION_LOGICA                          {$$=$1;}
+    | DATO                                      {$$=$1;}
 ;
 
 DATO:
-    | identificador {$$ = new nativo.default(new Tipo.default(Tipo.DataType.IDENTIFICADOR), $1, @1.first_line, @1.first_column);}
+    identificador {$$ = new nativo.default(new Tipo.default(Tipo.DataType.IDENTIFICADOR), $1, @1.first_line, @1.first_column);}
     | entero {$$= new nativo.default(new Tipo.default(Tipo.DataType.ENTERO),$1, @1.first_line, @1.first_column);}
     | double {$$= new nativo.default(new Tipo.default(Tipo.DataType.DECIMAL),$1, @1.first_line, @1.first_column);}
     | cadena {$$= new nativo.default(new Tipo.default(Tipo.DataType.CADENA),$1, @1.first_line, @1.first_column);}
 ;
 
 EXPRESION_RELACIONAL :
-    EXPRESION mayor_que EXPRESION {$$ = new relacional.default(relacional.tipoOp.MAYOR, $1, $3, @1.first_line, @1.first_column);}
+    EXPRESION mayor_igual EXPRESION {$$ = new relacional.default(relacional.tipoOp.MAYOR_IGUAL, $1, $3, @1.first_line, @1.first_column);}
+    | EXPRESION mayor_que EXPRESION {$$ = new relacional.default(relacional.tipoOp.MAYOR, $1, $3, @1.first_line, @1.first_column);}
+    | EXPRESION menor_igual EXPRESION {$$ = new relacional.default(relacional.tipoOp.MENOR_IGUAL, $1, $3, @1.first_line, @1.first_column);}
+    | EXPRESION menor_que EXPRESION {$$ = new relacional.default(relacional.tipoOp.MENOR, $1, $3, @1.first_line, @1.first_column);}
+    | EXPRESION diferente EXPRESION {$$ = new relacional.default(relacional.tipoOp.DIFERENTE, $1, $3, @1.first_line, @1.first_column);}
 ;
 
 EXPRESION_LOGICA :
-    EXPRESION_RELACIONAL or EXPRESION_RELACIONAL {$$ = new logica.default(logica.tipoOp.OR, $1, $3, @1.first_line, @1.first_column);}
+    EXPRESION and EXPRESION {$$ = new logica.default(logica.tipoOp.AND, $1, $3, @1.first_line, @1.first_column);}
+    | EXPRESION or EXPRESION {$$ = new logica.default(logica.tipoOp.OR, $1, $3, @1.first_line, @1.first_column);}
+    | not EXPRESION {$$ = new logica.default(logica.tipoOp.NOT, null, $2, @1.first_line, @1.first_column);}
 ;

@@ -5,7 +5,7 @@ import Tipo, {DataType} from '../Symbol/Type';
 import SymbolTable from '../Symbol/SymbolTable';
 import cloneDeep from 'lodash/cloneDeep';
 
-export default class If extends Instruccion {
+export default class Mientras extends Instruccion {
     private operacion: Instruccion;
     private listaInstrucciones: Instruccion [];    
 
@@ -22,7 +22,7 @@ export default class If extends Instruccion {
 
     public interpretar(arbol: Arbol, tabla: tablaSimbolo) {
         const tablaLocal = new SymbolTable(tabla)
-        while(cloneDeep(this.operacion).interpretar(arbol, tablaLocal)){   
+        while(cloneDeep(this.operacion).interpretar(arbol, tablaLocal)){ 
             const instructionsToExec = cloneDeep(this.listaInstrucciones)    
             for(let i of instructionsToExec){
                 i.interpretar(arbol, tablaLocal)

@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Navbar() {
+export default function Navbar(props) {
     return (
         <>
 
@@ -25,7 +25,7 @@ export default function Navbar() {
                                         REPORTES
                                     </a>
                                     <ul className="dropdown-menu dropdown-menu-dark">
-                                        <li><a className="dropdown-item" href="#">Reporte de errores</a></li>
+                                        <li><a className="dropdown-item" onClick={props.err}>Reporte de errores</a></li>
                                         <li>
                                             <hr className="dropdown-divider" />
                                         </li>

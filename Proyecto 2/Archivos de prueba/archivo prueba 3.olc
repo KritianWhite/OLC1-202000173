@@ -1,7 +1,39 @@
-	if(6>5 || 4>5){
-       		print("estoy adentro del if");
+int variable1 = 10;
+int variable2 = 15;
+if(6>5 || 4>5){
+        print("estoy adentro del if");
+	print(variable1);
+        if(6>5 || 4>5){
+       		print("estoy adentro del if con if");
 	       	print(variable1);
+		if(6>5 || 4>5){
+       			print("estoy adentro del if del if con if");
+	       		print(variable1 + variable2);
+		}
 	}elif(5>4 || 4>5){
-	      print("Estoy adentro del elif");
+	      print("Estoy adentro del if con elif");
 	      print(variable2);
 	}
+}elif(5>4 || 4>5){
+	print("Estoy adentro del elif");
+	print(variable2);
+        if(6>5 || 4>5){
+		int variable3 = 20;
+       		print("estoy adentro del elif con if");
+	       	print(variable1);
+	}elif(5>4 || 4>5){
+	      print("Estoy adentro del elif con elif");
+	      print(variable2);
+	}
+}elif(5>4 || 4>5){
+	print("Estoy adentro del segundo elif");
+	print(variable2);
+        if(6>5 || 4>5){
+       		print("estoy adentro del segundo elif con if");
+	       	print(variable1);
+	}elif(5>4 || 4>5){
+	      print("Estoy adentro del segundo elif con elif");
+	      print(variable2);
+	}
+}
+print(variable3);
