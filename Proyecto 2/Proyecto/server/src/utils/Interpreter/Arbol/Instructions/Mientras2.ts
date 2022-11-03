@@ -21,13 +21,13 @@ export default class Mientras extends Instruccion {
     }
 
     public interpretar(arbol: Arbol, tabla: tablaSimbolo) {
-        const tablaLocal = new SymbolTable(tabla)
-        while (cloneDeep(this.operacion).interpretar(arbol, tablaLocal)) {
-            const instructionsToExec = cloneDeep(this.listaInstrucciones)
-            for (let i of instructionsToExec) {
-                i.interpretar(arbol, tablaLocal)
+        
+            while(cloneDeep(this.operacion).interpretar(arbol, tabla)){
+                let tablaLocal = new SymbolTable(tabla);
+                for(let inst of this.listaInstrucciones){
+                    let ret = inst.interpretar(arbol, tabla);
+                }
+                return null
             }
-            return null;
-        }
     }
 }

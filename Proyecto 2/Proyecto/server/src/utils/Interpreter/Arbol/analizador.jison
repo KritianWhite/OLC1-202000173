@@ -11,6 +11,7 @@
     const declaracion = require('./Instructions/Declaracion')
     const asignacion = require('./Instructions/Asignacion')
     const ifIns = require('./Instructions/IfIns')
+    const mientras = require('./Instructions/Mientras')
 %}
 %lex 
 
@@ -72,6 +73,7 @@
 \n {}
 ^\d*\.\d+$                  return 'double';
 [0-9]+                      return 'entero';
+"False"|"True"              return 'logico';
 \"[^\"]*\"                  { yytext=yytext.substr(1,yyleng-2); return 'cadena'; }
 [A-Za-z]+["_"0-9A-Za-z]*    return 'identificador';
 
@@ -139,6 +141,10 @@ ELSE:
                 {$$=new ifIns.default('',$3, undefined,undefined,@1.first_line,@1.first_column);}
 ;
 
+WHILE:
+    pr_while parentesisL EXPRESION parentesisR LlaveL INSTRUCCIONES LlaveR
+            {$$= new mientras.default($3,$6,@1.first_line,@1.first_column);}
+;
 
 
 
@@ -175,6 +181,7 @@ EXPRESION :
 DATO:
     identificador {$$ = new nativo.default(new Tipo.default(Tipo.DataType.IDENTIFICADOR), $1, @1.first_line, @1.first_column);}
     | entero {$$= new nativo.default(new Tipo.default(Tipo.DataType.ENTERO),$1, @1.first_line, @1.first_column);}
+    | logico {$$= new nativo.default(new Tipo.default(Tipo.DataType.LOGICO),$1, @1.first_line, @1.first_column);}
     | double {$$= new nativo.default(new Tipo.default(Tipo.DataType.DECIMAL),$1, @1.first_line, @1.first_column);}
     | cadena {$$= new nativo.default(new Tipo.default(Tipo.DataType.CADENA),$1, @1.first_line, @1.first_column);}
 ;

@@ -16,12 +16,13 @@ export default class Nativo extends Instruccion {
 
         if(this.tipoDato.getTipo() === DataType.ENTERO){
             return this.valor
-        }else if (this.tipoDato.getTipo() === DataType.DECIMAL) {
-            return this.valor.toString()
-        }else if (this.tipoDato.getTipo() === DataType.LOGICO) {
-            return this.valor.toString();
-        }else if (this.tipoDato.getTipo() === DataType.CARACTER) {
-            return this.valor.toString();
+        // }else if (this.tipoDato.getTipo() === DataType.DECIMAL) {
+        //     return this.valor.toString()
+        // }else if (this.tipoDato.getTipo() === DataType.LOGICO) {
+        //     return this.valor.toString();
+        // }else if (this.tipoDato.getTipo() === DataType.CARACTER) {
+        //     return this.valor.toString();
+        // 
         }else if (this.tipoDato.getTipo() === DataType.CADENA) {
             return this.valor.toString();
         }else if (this.tipoDato.getTipo() === DataType.IDENTIFICADOR){
