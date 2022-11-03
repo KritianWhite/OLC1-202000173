@@ -9,7 +9,7 @@ export default class Declaracion extends Instruccion {
     private tipo: Tipo;
     private valor: Instruccion;
     
-    constructor(id: String, tipo: Tipo, valor: Instruccion, linea: number, columna: number) {
+    constructor(id: String, tipo: Tipo, valor: any, linea: number, columna: number) {
         super(new Tipo(DataType.INDEFINIDO), linea, columna);
         this.id = id;
         this.tipo = tipo;

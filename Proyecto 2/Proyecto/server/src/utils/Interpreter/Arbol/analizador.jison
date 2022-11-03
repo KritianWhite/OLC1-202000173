@@ -71,7 +71,7 @@
 
 [ \r\t]+ { }
 \n {}
-^\d*\.\d+$                  return 'double';
+[0-9]+("."[0-9]+)\b         return 'decimal';
 [0-9]+                      return 'entero';
 "False"|"True"              return 'logico';
 \"[^\"]*\"                  { yytext=yytext.substr(1,yyleng-2); return 'cadena'; }
@@ -182,7 +182,7 @@ DATO:
     identificador {$$ = new nativo.default(new Tipo.default(Tipo.DataType.IDENTIFICADOR), $1, @1.first_line, @1.first_column);}
     | entero {$$= new nativo.default(new Tipo.default(Tipo.DataType.ENTERO),$1, @1.first_line, @1.first_column);}
     | logico {$$= new nativo.default(new Tipo.default(Tipo.DataType.LOGICO),$1, @1.first_line, @1.first_column);}
-    | double {$$= new nativo.default(new Tipo.default(Tipo.DataType.DECIMAL),$1, @1.first_line, @1.first_column);}
+    | decimal {$$= new nativo.default(new Tipo.default(Tipo.DataType.DECIMAL),$1, @1.first_line, @1.first_column);}
     | cadena {$$= new nativo.default(new Tipo.default(Tipo.DataType.CADENA),$1, @1.first_line, @1.first_column);}
 ;
 
