@@ -8,7 +8,7 @@ import Errores from "../Components/Errores";
 import { Graphviz } from 'graphviz-react';
 
 function Index() {
-  const [value, setValue] = useState("print(\"Hola mundo\");");
+  const [value, setValue] = useState("");
   const [response, setResponse] = useState("");
   const [arr, setArr] = useState([]);
   const [arbolito, setArbolito] = useState("digraph {\nnode00[label = \"SALE\"];\nnode00 -> node000\nnode003[label = \"EN\"];\nnode00 -> node001\nnode000[label = \"(\"];\nnode00 -> node003\nnode001[label = \"VACAS\"];\nnode00 -> node002\nnode002[label = \")\"];\n}");
