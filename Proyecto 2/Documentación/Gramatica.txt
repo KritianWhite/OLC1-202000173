@@ -1,21 +1,27 @@
 
-inicio : instrucciones EOF;
 
-instrucciones : instrucciones
+
+
+%start inicio
+
+inicio : instrucciones EOF
+	;
+
+instrucciones : instrucciones instruccion
             | instruccion
             ;
 
-instruccion : declaracion 
-            | startwith 
-            | writeline 
-            | asignacion 
+instruccion : declaracion
+            | startwith
+            | writeline
+            | asignacion
             | sent_if
             | sent_while
             | sent_Dowhile
             | BREAK PYC
             | sent_switch
             | sent_for
-            |  ID DECRE PYC
+            | ID DECRE PYC
             | ID INCRE  PYC
             | CONTINUE PYC
             | funciones
@@ -27,19 +33,18 @@ instruccion : declaracion
 
 declaracion : tipo lista_ids IGUAL e PYC
             | tipo lista_ids PYC
-            | tipo lista_ids CORA CORC IGUAL NEW  tipo CORA e CORC  PYC
-            | tipo lista_ids CORA e CORC IGUAL CORA listasimpleCORC  PYC
-            | tipo lista_ids CORA CORC CORA CORC IGUAL NEW  tipo CORA e CORC  CORA  e CORC PYC
+            | tipo CORA CORC lista_ids IGUAL NEW  tipo CORA e CORC  PYC
+            | tipo CORA CORC lista_ids IGUAL LLAVA listasimple  LLAVC  PYC
+            | tipo CORA CORC CORA CORC lista_ids IGUAL NEW  tipo CORA e CORC  CORA  e CORC PYC
             | tipo CORA CORC  lista_ids IGUAL e PYC
-            | tipo lista_ids CORA e CORC CORA e CORC  IGUAL CORA doublearray  CORC  PYC
-
+            | tipo CORA CORC CORA CORC lista_ids  IGUAL LLAVA doublearray  LLAVC  PYC
             ;
 
-doublearray: doublearray COMA CORA listasimple CORC
-            | CORA listasimple   CORC
+doublearray: doublearray COMA LLAVA listasimple LLAVC
+            | LLAVA listasimple   LLAVC
 	    ;
 
-listasimple:listasimple COMA e
+listasimple: listasimple COMA e
 	    | e
 	    ;
 
@@ -66,28 +71,29 @@ asignacion : ID IGUAL e PYC
 
 sent_if : IF PARA e PARC LLAVA instrucciones LLAVC
         | IF PARA e PARC LLAVA instrucciones LLAVC ELSE LLAVA instrucciones LLAVC
-        | IF PARA e PARC LLAVA instrucciones LLAVC ELSE sent_if
+        | ELIF PARA e PARC LLAVA instrucciones LLAVC sent_else
         ;
+
+sent_else :
+        ELSE LLAVA instrucciones LLAVC
+        |
+;
 
 sent_while : WHILE PARA e PARC LLAVA instrucciones LLAVC
             ;
 
 
 sent_Dowhile : DO  LLAVA instrucciones LLAVC WHILE PARA e PARC PYC
+        | DO  LLAVA instrucciones LLAVC UNTIL PARA e PARC PYC
             ;
 
 sent_for : FOR PARA dec_asig_for PYC e PYC actualizacion_for PARC LLAVA instrucciones LLAVC
         ;
-// for(i = 0 ; ...)
+
 dec_asig_for : tipo ID IGUAL e
             | ID IGUAL e
             ;
-//x = 0
-// i --
-// i++ 
-// x++ 
-// print(x) -> 1
-// i = i + 1 
+
 actualizacion_for : ID DECRE
                 | ID INCRE
                 | ID IGUAL e
@@ -172,9 +178,8 @@ e : e MAS e
     | CARACTER
     | TRUE
     | FALSE
-    | e INTERROGACION e DSPNTS e 
+    | e INTERROGACION e DSPNTS e
     | ID INCRE
     | ID DECRE
     | llamada
     ;
-
