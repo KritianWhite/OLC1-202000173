@@ -134,16 +134,14 @@ caracter         (\'({escape2} | {aceptacion2})\')
 [/][*][^*]*[*]+([^/*][^*]*[*]+)*[/] {}
 
 <<EOF>>               return 'EOF'
-.                     { console.log("Error Lexico "+yytext
+.     {                 console.log("Error Lexico "+yytext
                         +" linea "+yylineno
                         +" columna "+(yylloc.last_column+1));
 
                         new errores.default('Lexico', 'El caracter ' + yytext 
                                 + ' no forma parte del lenguaje', 
                                 yylineno+1, 
-                                yylloc.last_column+1); 
-                                      
-                        }
+                                yylloc.last_column+1);}
 
 /lex
 
@@ -224,7 +222,7 @@ instruccion : declaracion   { $$ =  $1; }
             | llamada PYC   { $$ = $1; } 
             | RETURN PYC        { $$ = new retorno.default(null); } 
             | RETURN e PYC      { $$ = new retorno.default($2); } 
-            | error         { console.log("Error Sintactico: " + yytext 
+            | error PYC         { console.log("Error Sintactico: " + yytext 
                                     + " linea: " + this._$.first_line 
                                     + " columna: " + this._$.first_column); 
                         

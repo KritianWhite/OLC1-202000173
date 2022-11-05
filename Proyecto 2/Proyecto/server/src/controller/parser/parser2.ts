@@ -4,10 +4,8 @@ import AST from '../../utils/Interprete/Ast/Ast'
 import Nodo from '../../utils/Interprete/Ast/Nodo'
 import Controlador from "../../utils/Interprete/Controlador"
 import TablaSimbolos from "../../utils/Interprete/TablaSimbolos/TablaSimbolos"
-import Errores from '../../utils/Interprete/Ast/Errores';
-
-
-
+import Errores from "../../utils/Interprete/Ast/Errores";
+import { lista_errores } from "../../utils/Interprete/Ast/Lista_Errores";
 
 export const parse2 = (req: Request & unknown, res: Response): void => {
     
@@ -23,17 +21,19 @@ export const parse2 = (req: Request & unknown, res: Response): void => {
 
         ast.ejecutar(controlador, ts_global)
         let ts_html = controlador.graficar_ts(controlador, ts_global)
-        let ts_html_error = controlador.obtenererrores();
+        let ts_html_error = controlador.errores
+        console.log("---------------",ts_html_error)
+        
     
         let nodo_ast : Nodo = ast.recorrer()
         grafo = nodo_ast.GraficarSintactico();
         //console.log(grafo);
 
-        res.json({ consola: controlador.consola, errores: ts_html_error, grafito: grafo, tablaSimbolos: ts_html })
+        res.json({ consola: controlador.consola, errores: ts_html_error, grafito: grafo, erroresL: lista_errores,  tablaSimbolos: ts_html })
 
     } catch (err) {
         console.log(err)
-        res.json({consola: "Se ha producido un error", error: err, grafito: grafo})
+        res.json({consola: "Ocurrió un error", error: err, grafito: grafo})
     }
  
 }

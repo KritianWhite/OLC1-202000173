@@ -15,16 +15,16 @@ export default function Errores(props) {
             </tr>
           </thead>
           <tbody>
-            {/* {props.valor.map((value, index) => {
+            {props.valor.map((value, index) => {
               return (
                 <tr key={index}>
-                  <th>{value.tipoError}</th>
-                  <td>{value.desc}</td>
-                  <td>{value.fila}</td>
-                  <td>{value.Columna}</td>
+                  <th>{value.tipo}</th>
+                  <td>{value.descripcion}</td>
+                  <td>{value.linea}</td>
+                  <td>{value.columna}</td>
                 </tr>
               );
-            })} */}
+            })}
           </tbody>
         </table>
       </div>

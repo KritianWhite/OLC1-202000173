@@ -29,7 +29,7 @@ function Index() {
     });
 
     Service.parse(value).then((response) => {
-      setArr(response.ts_html_error);
+      setArr(response.errores);
       console.log(arr)
     });
 
@@ -76,7 +76,7 @@ function Index() {
         comp={buttonLimpiar}
       />
       </div>
-      <Errores valor={arr} />
+      <Errores valor={arr}/>
       <div class="grafitoo">
         <Graphviz dot={arbolito} options={{fit: true, width: '100%', zoom: false}} />
       </div>
