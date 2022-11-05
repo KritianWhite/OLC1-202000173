@@ -27,9 +27,8 @@ export const parse2 = (req: Request & unknown, res: Response): void => {
     
         let nodo_ast : Nodo = ast.recorrer()
         grafo = nodo_ast.GraficarSintactico();
-        
+        //console.log(grafo);
 
-        console.log(grafo);
         res.json({ consola: controlador.consola, errores: ts_html_error, grafito: grafo, tablaSimbolos: ts_html })
 
     } catch (err) {
