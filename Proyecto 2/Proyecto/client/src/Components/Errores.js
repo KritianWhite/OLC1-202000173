@@ -15,7 +15,7 @@ export default function Errores(props) {
             </tr>
           </thead>
           <tbody>
-            {props.valor.map((value, index) => {
+            {/* {props.valor.map((value, index) => {
               return (
                 <tr key={index}>
                   <th>{value.tipoError}</th>
@@ -24,7 +24,7 @@ export default function Errores(props) {
                   <td>{value.Columna}</td>
                 </tr>
               );
-            })}
+            })} */}
           </tbody>
         </table>
       </div>

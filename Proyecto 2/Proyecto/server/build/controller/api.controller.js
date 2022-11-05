@@ -24,7 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const health = __importStar(require("./health/ping"));
-const parser = __importStar(require("./parser/parser"));
+//import * as parser from './parser/parser'
 const parser2 = __importStar(require("./parser/parser2"));
 /**
  * ...health: se llama express operator, lo que hace
@@ -33,4 +33,4 @@ const parser2 = __importStar(require("./parser/parser2"));
  * tengo que venir aqui a enumerar cada endpoint sino
  * que él mismo lo hace.
  */
-exports.default = Object.assign(Object.assign(Object.assign({}, health), parser), parser2);
+exports.default = Object.assign(Object.assign({}, health), parser2);

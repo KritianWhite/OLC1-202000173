@@ -1,41 +1,40 @@
 import { Response, Request } from "express";
-import Errores from '../../utils/Interpreter/Arbol/Errors/error';
-import Three from "../../utils/Interpreter/Arbol/Symbol/Three";
-import SymbolTable from "../../utils/Interpreter/Arbol/Symbol/SymbolTable";
-import { Instruccion } from "../../utils/Interpreter/Arbol/Abstract/Instruccion";
+
+import AST from '../../utils/Interprete/Ast/Ast'
+import Nodo from '../../utils/Interprete/Ast/Nodo'
+import Controlador from "../../utils/Interprete/Controlador"
+import TablaSimbolos from "../../utils/Interprete/TablaSimbolos/TablaSimbolos"
+import Errores from '../../utils/Interprete/Ast/Errores';
 
 
 
 
-
-export let listaErrores: Array<Errores> = [];
 export const parse2 = (req: Request & unknown, res: Response): void => {
+    
+    var interprete = require('../../utils/Analizador/interprete').parser;
+    const { peticion } = req.body
 
-    listaErrores = new Array<Errores>();
-    let parser = require('../../utils/Interpreter/Arbol/analizador')
+    let grafo = 'digraph {\nnode00[label = \"SALE\"];\nnode00 -> node000\nnode003[label = \"EN\"];\nnode00 -> node001\nnode000[label = \"(\"];\nnode00 -> node003\nnode001[label = \"VACAS\"];\nnode00 -> node002\nnode002[label = \")\"];\n}'
+    try {
+        let ast: AST = interprete.parse(peticion)
+        let respuesta = "";
+        let controlador = new Controlador()
+        let ts_global = new TablaSimbolos(null);
 
-    let data = '';
-    let contador = 0;
+        ast.ejecutar(controlador, ts_global)
+        let ts_html = controlador.graficar_ts(controlador, ts_global)
+        let ts_html_error = controlador.obtenererrores();
+    
+        let nodo_ast : Nodo = ast.recorrer()
+        grafo = nodo_ast.GraficarSintactico();
+        
 
-    req.on("data", (chunk) => {
-        data += chunk;
-        contador++;
-        console.log(contador)
-    })
+        console.log(grafo);
+        res.json({ consola: controlador.consola, errores: ts_html_error, grafito: grafo, tablaSimbolos: ts_html })
 
-    req.on("end", () => {
-        //console.log(data);
-        //res.json({ consola: data })
-        try {
-            console.log("entre al try catch");
-            let text = parser.parse(data.toString());
-            console.log(typeof text)
-            res.json({ consola: text })
-        } catch (err) {
-            console.log(err);
-            res.json({ consola: 'Me dió ansiedad :(', error: err });
-        }
-
-    })
-
+    } catch (err) {
+        console.log(err)
+        res.json({consola: "Se ha producido un error", error: err, grafito: grafo})
+    }
+ 
 }

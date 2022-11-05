@@ -16,23 +16,6 @@ if(6>5 || 4>5){
 		if(6>5 || 4>5){
        			print("estoy adentro del if del if con if");
 	       		print(variable1 + variable2);
-			while( 2 > 1 ){
-         			print("Estoy adentro del while 1");
-        		 	print(variable1);
-				if(6>5 || 4>5){
-       					print("estoy adentro del if con if");
-	       				print(variable1);
-					if(6>5 || 4>5){
-       						print("estoy adentro del if del if con if");
-	       					print(variable1 + variable2);
-						while( 2 > 1 ){
-         						print("Estoy adentro del while 2");
-        		 				print(variable1);
-				
-						@}
-					}
-				}
-			}
 		}
 	}elif(5>4 || 4>5){
 	      print("Estoy adentro del if con elif");
@@ -60,8 +43,139 @@ if(6>5 || 4>5){
 	      print(variable2);
 	}
 }
-while( variable1 < 1 ){
-       int variable2 = 1;
-       print(variable2);
-}
 print(variable3);
+
+
+
+
+int x = 50;
+while (x<100){
+	if (x > 50){
+		Println("Mayor que 50");
+	}else{
+		Print("Menor que 100");
+	}
+	x++;
+}
+
+
+
+for ( int i=0; i<3;i++ ){
+	Println("i="+i);
+	//más sentencias
+}
+
+
+
+
+int a =5;
+do{
+ 	if (a>=1 && a <3){ 
+ 		Println(true);
+ 	}
+ 	else{
+ 		Println(false);
+ 	}
+ 	a--;
+} while (a>0);
+
+
+
+int a =5;
+do{
+ 	if (a>=1 && a <3){ 
+ 		Println(true);
+ 	}
+ 	else{
+ 		Println(false);
+ 	}
+ 	a--;
+} until (a==0);
+
+
+
+
+for(int i = 0; i < 9; i++){
+ 	if(i==5){
+ 		Println("Me salgo del ciclo en el numero " + i); 
+ 		break;
+ 	}
+ 	Println(i);
+}
+
+
+
+
+for(int i = 0; i < 9; i++){
+ 	if(i==5){
+ 		Println("Me salte el numero " + i); continue;
+ 	}
+ 	Println(i);
+}
+
+
+
+
+sumar(int n1, int n2): int {
+	int n3;
+	n3 = n1+n2;
+	return n3; //retorno el valor
+}
+
+
+
+
+conversion (double pies, string tipo): double {
+ 	if (tipo == “metro”){
+ 		return pies/3.281;
+ 	}else{
+ 		return -1;
+ 	}
+}
+
+
+
+holamundo(): void {
+	Print("Hola mundo");
+	Print("Ejemplo de llamada a función"); 
+	Int num = suma(6,5); // a = 11 
+	Println(“El valor de a es: ” + a);
+
+}
+
+suma(int num1, int num2):int {
+	Println("Aquí puede venir cualquier sentencia :D"); 
+	return num1 + num2;
+	Println("Aquí pueden venir más sentencias, pero no se ejecutarán por la 
+	sentencia RETURN D:"); //Print en una línea
+}
+int num = suma(6, 5);
+println("El resultado es: "+num+". Bien hecho");
+println(suma(6,5));
+
+
+
+string cad = toLower("hola mundo = " + 100);
+print(cad);
+
+string cad = toUpper("hola mundo = " + 100);
+print(cad);
+
+
+
+
+
+
+funcion1():void{
+	Print("hola");
+}
+run funcion1();
+
+
+funcion2(string mensaje):void{ 
+	Print(mensaje);
+}
+Run funcion2("hola soy un mensaje");
+
+
+

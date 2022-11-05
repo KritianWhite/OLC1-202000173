@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "set NODE_ENV=DEV&&nodemon",
-    "jison": "jison src/utils/Interpreter/Arbol/analizador.jison && copy analizador.js build\\utils\\Interpreter\\Arbol && rimraf analizador.js",
+    "jison": "jison src/utils/Analizador/interprete.jison && copy interprete.js build\\utils\\Analizador && rimraf interprete.js",
     "build": "rimraf ./build&&tsc&&npm run jison",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -26,6 +26,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
+    "@diagrams-ts/graphviz-cli-renderer": "^0.5.0",
     "body-parser": "^1.20.1",
     "config": "^3.3.8",
     "cors": "^2.8.5",
@@ -33,6 +34,8 @@
     "express": "^4.18.2",
     "jison": "^0.4.18",
     "lodash": "^4.17.21",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "ts-graphviz": "^0.16.0",
+    "graphviz": "^0.0.9"
   }
 }
