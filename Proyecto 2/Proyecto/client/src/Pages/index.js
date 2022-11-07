@@ -78,7 +78,7 @@ function Index() {
       </div>
       <Errores valor={arr}/>
       <div class="grafitoo">
-        <Graphviz dot={arbolito} options={{fit: true, width: '100%', zoom: false}} />
+        <Graphviz dot={arbolito} options={{fit: true, width: '100%', zoom: true}} />
       </div>
     </>
   );
